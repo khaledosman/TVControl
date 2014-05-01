@@ -20,11 +20,11 @@ namespace KinectControl
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = Constants.screenWidth;
+            graphics.PreferredBackBufferHeight = Constants.screenHeight;
             graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
-            Kinect = new Kinect(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            Kinect = new Kinect();
             screenManager = new ScreenManager(this, Kinect);
             Components.Add(screenManager);
         }

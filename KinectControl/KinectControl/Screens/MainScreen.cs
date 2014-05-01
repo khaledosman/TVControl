@@ -52,6 +52,7 @@ namespace KinectControl.Screens
         {
            // ScreenManager.Kinect.comm.ClosePort();
             //this.Remove();
+            kinect.CloseKinect(kinect.nui);
             this.ScreenManager.Game.Exit();
         }
         public override void LoadContent()

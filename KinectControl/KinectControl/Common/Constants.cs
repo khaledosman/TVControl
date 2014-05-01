@@ -5,6 +5,8 @@ namespace KinectControl.Common
     {
         public const int hPad = 32;
         public const int vPad = 16;
+        public const int screenWidth = 1280;
+        public const int screenHeight = 720;
         public const int InvalidTrackingId = 0;
         /// <summary>
         /// Height of interaction region in UI coordinates.

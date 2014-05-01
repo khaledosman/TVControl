@@ -55,7 +55,6 @@ namespace KinectControl.Common
         private Skeleton[] skeletons;
         public KinectSensor nui;
         public Skeleton trackedSkeleton;
-        private int ScreenWidth, ScreenHeight;
         /// <summary>
         /// Keeps track of set of interacting users.
         /// </summary>
@@ -78,37 +77,28 @@ namespace KinectControl.Common
         public Device[] devices;
         #endregion
 
-        public Kinect(int screenWidth, int screenHeight)
+        #region constructors and destructors
+        public void CloseKinect(KinectSensor sensor)
+        {
+            sensor.DepthFrameReady -= this.SensorDepthFrameReady;
+            sensor.SkeletonFrameReady -= this.OnSkeletonFrameReady;
+            //this.interactionStream.InteractionFrameReady -= this.InteractionFrameReady;
+            //this.interactionStream.Dispose();
+            //this.interactionStream = null;
+            this.skeletons = null;
+            this.userInfos = null;
+            sensor.AudioSource.Stop();
+            sensor.ColorStream.Disable();
+            sensor.DepthStream.Disable();
+            sensor.SkeletonStream.Disable();
+            this.sensorChooser.Stop();
+        }
+        public Kinect()
         {
             skeletons = new Skeleton[0];
             trackedSkeleton = null;
             //swapHand = new SwapHand();
-            ScreenHeight = screenHeight;
-            ScreenWidth = screenWidth; 
             this.InitializeNui();
-        }
-        #region destructors
-        public void closeKinect()
-        {
-            this.sensorChooser.Stop();
-        }
-        /// <summary>
-        /// Clean up interaction stream and associated data structures.
-        /// </summary>
-        /// <param name="sensor">
-        /// Sensor from which we were streaming depth and skeleton data.
-        /// </param>
-        private void UninitializeInteractions(KinectSensor sensor)
-        {
-            nui.DepthFrameReady -= this.SensorDepthFrameReady;
-            nui.SkeletonFrameReady -= this.OnSkeletonFrameReady;
-
-            this.skeletons = null;
-            this.userInfos = null;
-
-            this.interactionStream.InteractionFrameReady -= this.InteractionFrameReady;
-            this.interactionStream.Dispose();
-            this.interactionStream = null;
         }
 
 
@@ -179,8 +169,6 @@ namespace KinectControl.Common
                 // gesture consists of the same thing 10 times 
                 JoinedHandsSegments[i] = JoinedHandsSegment;
             }
-            //JoinedHandsSegment2 JoinedHandsSegment2 = new JoinedHandsSegment2();
-            //JoinedHandsSegments[20] = JoinedHandsSegment2;
             this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);
 
             IRelativeGestureSegment[] swipeUpSegments = new IRelativeGestureSegment[3];
@@ -206,6 +194,12 @@ namespace KinectControl.Common
             swipeRightSegments[1] = new SwipeRightSegment2();
             swipeRightSegments[2] = new SwipeRightSegment3();
             gestureController.AddGesture(GestureType.SwipeRight, swipeRightSegments);
+
+            IRelativeGestureSegment[] raiseHandSegments = new IRelativeGestureSegment[2];
+            raiseHandSegments[0] = new RaiseHandSegment1();
+            raiseHandSegments[1] = new RaiseHandSegment2();
+            gestureController.AddGesture(GestureType.RaiseHand, raiseHandSegments);
+
             gestureController.GestureRecognized += OnGestureRecognized;
         }
        
@@ -253,6 +247,7 @@ namespace KinectControl.Common
             voiceThread.Start();
         }
         #endregion
+
         #region Processing
         /// <summary>
         /// Handler for sensor chooser's KinectChanged event.
@@ -263,7 +258,7 @@ namespace KinectControl.Common
         {
             if (args.OldSensor != null)
             {
-                this.UninitializeInteractions(args.OldSensor);
+                this.CloseKinect(args.OldSensor);
 
                 try
                 {
@@ -412,7 +407,7 @@ namespace KinectControl.Common
                             Console.WriteLine(
                                 "User '{0}' has {1} hand within element {2}",
                                 info.SkeletonTrackingId,
-                                handPointer.HandType);
+                                handPointer.HandType, timestamp);
                         }
 
                         if (handPointer.HandEventType != InteractionHandEventType.None)
@@ -541,6 +536,8 @@ namespace KinectControl.Common
         }
         #endregion
 
+        #region helper methods
+
         public Skeleton[] requestSkeleton()
         {
             return skeletons;
@@ -552,7 +549,7 @@ namespace KinectControl.Common
         public Joint GetCursorPosition()
         {
             if (trackedSkeleton != null)
-                return trackedSkeleton.Joints[JointType.HandRight].ScaleTo(ScreenWidth, ScreenHeight, Constants.SkeletonMaxX, Constants.SkeletonMaxY);
+                return trackedSkeleton.Joints[JointType.HandRight].ScaleTo(Constants.screenWidth, Constants.screenHeight, Constants.SkeletonMaxX, Constants.SkeletonMaxY);
             else
                 return new Joint();
         }
@@ -592,3 +589,4 @@ namespace KinectControl.Common
         }
     }
 }
+        #endregion
