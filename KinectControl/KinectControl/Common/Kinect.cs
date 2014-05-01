@@ -122,7 +122,7 @@ namespace KinectControl.Common
         {
             _gesture = "";
             var index = 0;
-            //this.sensorChooser.KinectChanged += this.OnSensorChanged;
+            this.sensorChooser.KinectChanged += this.OnSensorChanged;
             while (this.nui == null && index < KinectSensor.KinectSensors.Count)
             {
                 this.nui = KinectSensor.KinectSensors[index];
@@ -132,7 +132,6 @@ namespace KinectControl.Common
                 }
                catch(Exception)
                 {
-                    Debug.WriteLine("Hi");
                 }
             }
             try
@@ -255,7 +254,7 @@ namespace KinectControl.Common
         }
         #endregion
         #region Processing
-     /*   /// <summary>
+        /// <summary>
         /// Handler for sensor chooser's KinectChanged event.
         /// </summary>
         /// <param name="sender">object sending the event</param>
@@ -265,7 +264,7 @@ namespace KinectControl.Common
             if (args.OldSensor != null)
             {
                 this.UninitializeInteractions(args.OldSensor);
-                this.closeKinect();
+
                 try
                 {
                     args.OldSensor.SkeletonStream.AppChoosesSkeletons = false;
@@ -309,7 +308,7 @@ namespace KinectControl.Common
 
                 this.nui = args.NewSensor;
             }
-        }*/
+        }
         /// <summary>
         /// Handler for the Kinect sensor's DepthFrameReady event
         /// </summary>
@@ -418,7 +417,7 @@ namespace KinectControl.Common
 
                         if (handPointer.HandEventType != InteractionHandEventType.None)
                         {
-                            Gesture = "{1}";
+                            //Gesture = "{1}";
                             Console.WriteLine(
                                 "User '{0}' performed {1} action with {2} hand at time {3}",
                                 info.SkeletonTrackingId,
@@ -481,13 +480,14 @@ namespace KinectControl.Common
                             }
                         }
                         framesCount++;
-                        EnableNearModeSkeletalTracking();
                         if (trackedSkeleton != null)
                         {
                             //if ((trackedSkeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Inferred) ||
                               //        (trackedSkeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.NotTracked))
+                             //   EnableNearModeSkeletalTracking();
                             //else if (this.nui.SkeletonStream.EnableTrackingInNearRange == true)
                               //  DisableNearModeSkeletalTracking();
+                          //  EnableNearModeSkeletalTracking();
                             if (GenerateDepth() > 140)
                             {
                                 this.interactionStream.InteractionFrameReady += this.InteractionFrameReady;
