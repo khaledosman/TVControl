@@ -51,7 +51,7 @@ namespace KinectControl.Screens
 
         public override void Initialize()
         {
-            showAvatar = true;
+            //showAvatar = false;
             enablePause = false;
             button = new Button();
             hand = new HandCursor();
@@ -63,7 +63,7 @@ namespace KinectControl.Screens
             textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);
 
             tv = new TvManager();
-            tvPopup = new PopupScreen();
+            tvPopup = new PopupScreen("");
             ScreenManager.AddScreen(tvPopup);
 
             base.Initialize();
@@ -101,9 +101,9 @@ namespace KinectControl.Screens
         }
         public override void Update(GameTime gameTime)
         {
-            hand.Update(gameTime);
-            button.Update(gameTime);
-            button.Clicked += button_Clicked;
+          //  hand.Update(gameTime);
+            //button.Update(gameTime);
+            //button.Clicked += button_Clicked;
             gesture = kinect.Gesture;
             if (FrameNumber % 240 == 0)
                 kinect.Gesture = "";
@@ -123,7 +123,8 @@ namespace KinectControl.Screens
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
 
                 tv.UpdateValues(leftAngle, rightAngle, leftDist > 0 && rightDist > 0);
-                tvPopup.message = tv.Status.Show();
+                tvPopup.message = tv.Status;
+                tvPopup.Update(gameTime);
             }
 
             base.Update(gameTime);
@@ -181,9 +182,9 @@ namespace KinectControl.Screens
                 //spriteBatch.End();
             }
 
-            spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);
-            button.Draw(spriteBatch);
-            hand.Draw(spriteBatch);
+            //spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);
+         //   button.Draw(spriteBatch);
+          // hand.Draw(spriteBatch);
 
             if (leftDist > 0 && rightDist > 0)
             {
@@ -191,9 +192,11 @@ namespace KinectControl.Screens
                     new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
                 spriteBatch.Draw(arrowTex, new Vector2(1180, 660), null, Color.OrangeRed, rightAngle,
                     new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
+                showAvatar = true;
             }
 
             spriteBatch.End();
+            tvPopup.Draw(gameTime);
 
             //PrimitiveBatch.Begin(PrimitiveType.TriangleList, null);
 

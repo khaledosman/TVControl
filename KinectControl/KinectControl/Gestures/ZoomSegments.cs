@@ -1,5 +1,4 @@
 ﻿using Microsoft.Kinect;
-using System.Diagnostics;
 
 namespace KinectControl.Common
 {

@@ -56,7 +56,7 @@ namespace KinectControl.Screens
                                                           (int)textSize.Y + vPad * 2);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(gradientTexture, backgroundRectangle, Color.White);
+            spriteBatch.Draw(gradientTexture, backgroundRectangle, Color.Transparent);
             spriteBatch.DrawString(font, message, textPosition, Color.Orange);
             spriteBatch.End();
             base.Draw(gameTime);
