@@ -15,7 +15,7 @@ namespace KinectControl.Screens
         private int screenHeight;
         private int counter;
         private ContentManager content;
-        private string message;
+        public string message;
         private Texture2D gradientTexture;
 
         public PopupScreen() { message = "No user detected, Game paused"; counter = 1; }

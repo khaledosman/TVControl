@@ -22,11 +22,13 @@ namespace KinectControl
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferredBackBufferWidth = Constants.screenWidth;
             graphics.PreferredBackBufferHeight = Constants.screenHeight;
+            graphics.PreferMultiSampling = true;
             graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
             Kinect = new Kinect();
             screenManager = new ScreenManager(this, Kinect);
             Components.Add(screenManager);
+            Components.Add(new DebugComponent(this));
         }
 
         protected override void Initialize()

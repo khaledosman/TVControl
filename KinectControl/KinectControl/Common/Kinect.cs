@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.Kinect;
 using System.Threading;
 using Microsoft.Kinect.Toolkit.Interaction;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 
 namespace KinectControl.Common
 {
-   
+
     public class Kinect
     {
         #region Gestures variables
@@ -120,7 +121,7 @@ namespace KinectControl.Common
                 {
                     this.nui.Start();
                 }
-               catch(Exception)
+                catch (Exception)
                 {
                 }
             }
@@ -150,7 +151,7 @@ namespace KinectControl.Common
         public void InitializeGestures()
         {
             gestureController = new GestureController();
-            nui.ElevationAngle = 15;
+            nui.ElevationAngle = 6;
             comm = new CommunicationManager("9600");
             IRelativeGestureSegment[] waveLeftSegments = new IRelativeGestureSegment[6];
             WaveLeftSegment1 waveLeftSegment1 = new WaveLeftSegment1();
@@ -203,7 +204,7 @@ namespace KinectControl.Common
 
             gestureController.GestureRecognized += OnGestureRecognized;
         }
-       
+
         /// <summary>
         /// Prepare to feed data and skeleton frames to a new interaction stream and receive
         /// interaction data from interaction stream.
@@ -219,13 +220,13 @@ namespace KinectControl.Common
             myInteractionClient = new MyInteractionClient();
             this.interactionStream = new InteractionStream(nui, myInteractionClient);
         }
-        
+
         public void InitializeDevices()
         {
             devices = new Device[2];
             devices[0] = new Device("LED1", "1", "0");
             devices[1] = new Device("LED2", "2", "9");
-            foreach(Device d in devices)
+            foreach (Device d in devices)
             {
                 d.switchOff(comm);
             }
@@ -319,18 +320,18 @@ namespace KinectControl.Common
                 {
                     depthBuffer = new DepthImagePixel[depthFrame.PixelDataLength];
                     depthFrame.CopyDepthImagePixelDataTo(depthBuffer);
-                try
-                {
-                    // Hand data to Interaction framework to be processed
-                    this.interactionStream.ProcessDepth(depthBuffer, depthFrame.Timestamp);
+                    try
+                    {
+                        // Hand data to Interaction framework to be processed
+                        this.interactionStream.ProcessDepth(depthBuffer, depthFrame.Timestamp);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // DepthFrame functions may throw when the sensor gets
+                        // into a bad state.  Ignore the frame in that case.
+                    }
                 }
-                catch (InvalidOperationException)
-                {
-                    // DepthFrame functions may throw when the sensor gets
-                    // into a bad state.  Ignore the frame in that case.
-                }
-                }
-               
+
             }
         }
 
@@ -339,99 +340,99 @@ namespace KinectControl.Common
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-      /*  private void InteractionFrameReady(object sender, InteractionFrameReadyEventArgs e)
-        {
-            // Check for a null userInfos since we may still get posted events
-            // from the stream after we have unregistered our event handler and
-            // deleted our buffers.
-            if (this.userInfos == null)
-            {
-                return;
-            }
-            UserInfo[] localUserInfos = null;
-            long timestamp = 0;
+        /*  private void InteractionFrameReady(object sender, InteractionFrameReadyEventArgs e)
+          {
+              // Check for a null userInfos since we may still get posted events
+              // from the stream after we have unregistered our event handler and
+              // deleted our buffers.
+              if (this.userInfos == null)
+              {
+                  return;
+              }
+              UserInfo[] localUserInfos = null;
+              long timestamp = 0;
 
-            using (InteractionFrame interactionFrame = e.OpenInteractionFrame())
-            {
-                if (interactionFrame != null)
-                {
-                    // Copy interaction frame data so we can dispose interaction frame
-                    // right away, even if data processing/event handling takes a while.
-                    interactionFrame.CopyInteractionDataTo(this.userInfos);
-                    timestamp = interactionFrame.Timestamp;
-                    localUserInfos = this.userInfos;
-                }
-            }
+              using (InteractionFrame interactionFrame = e.OpenInteractionFrame())
+              {
+                  if (interactionFrame != null)
+                  {
+                      // Copy interaction frame data so we can dispose interaction frame
+                      // right away, even if data processing/event handling takes a while.
+                      interactionFrame.CopyInteractionDataTo(this.userInfos);
+                      timestamp = interactionFrame.Timestamp;
+                      localUserInfos = this.userInfos;
+                  }
+              }
 
-            if (localUserInfos != null)
-            {
-                //// TODO: Process user info data, perform hit testing with UI, route UI events, etc.
-                //// TODO: See KinectRegion and KinectAdapter in Microsoft.Kinect.Toolkit.Controls assembly
-                //// TODO: For a more comprehensive example on how to do this.
+              if (localUserInfos != null)
+              {
+                  //// TODO: Process user info data, perform hit testing with UI, route UI events, etc.
+                  //// TODO: See KinectRegion and KinectAdapter in Microsoft.Kinect.Toolkit.Controls assembly
+                  //// TODO: For a more comprehensive example on how to do this.
 
-                var currentUserSet = new HashSet<int>();
-                var usersToRemove = new HashSet<int>();
+                  var currentUserSet = new HashSet<int>();
+                  var usersToRemove = new HashSet<int>();
 
-                // Keep track of current users in scene
-                foreach (var info in localUserInfos)
-                {
-                    if (info.SkeletonTrackingId == Constants.InvalidTrackingId)
-                    {
-                        // Only look at user information corresponding to valid users
-                        continue;
-                    }
+                  // Keep track of current users in scene
+                  foreach (var info in localUserInfos)
+                  {
+                      if (info.SkeletonTrackingId == Constants.InvalidTrackingId)
+                      {
+                          // Only look at user information corresponding to valid users
+                          continue;
+                      }
 
-                    if (!this.trackedUsers.Contains(info.SkeletonTrackingId))
-                    {
-                        Console.WriteLine("New user '{0}' entered scene at time {1}", info.SkeletonTrackingId, timestamp);
-                    }
+                      if (!this.trackedUsers.Contains(info.SkeletonTrackingId))
+                      {
+                          Console.WriteLine("New user '{0}' entered scene at time {1}", info.SkeletonTrackingId, timestamp);
+                      }
 
-                    currentUserSet.Add(info.SkeletonTrackingId);
-                    this.trackedUsers.Add(info.SkeletonTrackingId);
+                      currentUserSet.Add(info.SkeletonTrackingId);
+                      this.trackedUsers.Add(info.SkeletonTrackingId);
 
-                    // Perform hit testing and look for Grip and GripRelease events
-                    foreach (var handPointer in info.HandPointers)
-                    {
-                        double xUI = handPointer.X * Constants.InteractionRegionWidth;
-                        double yUI = handPointer.Y * Constants.InteractionRegionHeight;
-                        var uiElement = myInteractionClient.PerformHitTest(xUI, yUI);
+                      // Perform hit testing and look for Grip and GripRelease events
+                      foreach (var handPointer in info.HandPointers)
+                      {
+                          double xUI = handPointer.X * Constants.InteractionRegionWidth;
+                          double yUI = handPointer.Y * Constants.InteractionRegionHeight;
+                          var uiElement = myInteractionClient.PerformHitTest(xUI, yUI);
 
-                        if (uiElement != null)
-                        {
-                            Console.WriteLine(
-                                "User '{0}' has {1} hand within element {2}",
-                                info.SkeletonTrackingId,
-                                handPointer.HandType, timestamp);
-                        }
+                          if (uiElement != null)
+                          {
+                              Console.WriteLine(
+                                  "User '{0}' has {1} hand within element {2}",
+                                  info.SkeletonTrackingId,
+                                  handPointer.HandType, timestamp);
+                          }
 
-                        if (handPointer.HandEventType != InteractionHandEventType.None)
-                        {
-                            //Gesture = "{1}";
-                            Console.WriteLine(
-                                "User '{0}' performed {1} action with {2} hand at time {3}",
-                                info.SkeletonTrackingId,
-                                handPointer.HandEventType,
-                                handPointer.HandType,
-                                timestamp);
-                        }
-                    }
-                }
+                          if (handPointer.HandEventType != InteractionHandEventType.None)
+                          {
+                              //Gesture = "{1}";
+                              Console.WriteLine(
+                                  "User '{0}' performed {1} action with {2} hand at time {3}",
+                                  info.SkeletonTrackingId,
+                                  handPointer.HandEventType,
+                                  handPointer.HandType,
+                                  timestamp);
+                          }
+                      }
+                  }
 
-                foreach (var id in this.trackedUsers)
-                {
-                    if (!currentUserSet.Contains(id))
-                    {
-                        usersToRemove.Add(id);
-                    }
-                }
+                  foreach (var id in this.trackedUsers)
+                  {
+                      if (!currentUserSet.Contains(id))
+                      {
+                          usersToRemove.Add(id);
+                      }
+                  }
 
-                foreach (var id in usersToRemove)
-                {
-                    this.trackedUsers.Remove(id);
-                    Console.WriteLine("User '{0}' left scene at time {1}", id, timestamp);
-                }
-            }
-        }*/
+                  foreach (var id in usersToRemove)
+                  {
+                      this.trackedUsers.Remove(id);
+                      Console.WriteLine("User '{0}' left scene at time {1}", id, timestamp);
+                  }
+              }
+          }*/
         /// <summary>
         /// Handler for the Kinect sensor's SkeletonFrameReady event
         /// </summary>
@@ -462,22 +463,19 @@ namespace KinectControl.Common
                         this.interactionStream.ProcessSkeleton(this.skeletons, accelerometerReading, skeletonFrame.Timestamp);
                         for (int i = 0; i < this.skeletons.Length; i++)
                         {
-                            Skeleton skeleton = this.skeletons[i];
-                            if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
-                            {
-                                this.trackedSkeleton = skeleton;
-                            }
+                            this.trackedSkeleton = this.skeletons.OrderBy(s => s.Position.Z)
+                                .FirstOrDefault(s => s.TrackingState == SkeletonTrackingState.Tracked);
                         }
-                      //  trackedSkeleton = skeletons[0];
+                        //  trackedSkeleton = skeletons[0];
                         framesCount++;
                         if (trackedSkeleton != null)
                         {
                             //if ((trackedSkeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.Inferred) ||
-                              //        (trackedSkeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.NotTracked))
-                             //   EnableNearModeSkeletalTracking();
+                            //        (trackedSkeleton.Joints[JointType.HipCenter].TrackingState == JointTrackingState.NotTracked))
+                            //   EnableNearModeSkeletalTracking();
                             //else if (this.nui.SkeletonStream.EnableTrackingInNearRange == true)
-                              //  DisableNearModeSkeletalTracking();
-                          //  EnableNearModeSkeletalTracking();
+                            //  DisableNearModeSkeletalTracking();
+                            //  EnableNearModeSkeletalTracking();
                             if (GenerateDepth() > 140)
                             {
                                 //this.interactionStream.InteractionFrameReady += this.InteractionFrameReady;
@@ -548,7 +546,7 @@ namespace KinectControl.Common
             else
                 return new Joint();
         }
-     
+
         private void EnableNearModeSkeletalTracking()
         {
             if (this.nui != null && this.nui.DepthStream != null && this.nui.SkeletonStream != null)
@@ -567,7 +565,7 @@ namespace KinectControl.Common
                 this.nui.SkeletonStream.TrackingMode = SkeletonTrackingMode.Default; // Use seated tracking
             }
         }
-        
+
         /// <returns>
         /// Int number which is the calculated depth.
         /// </returns>

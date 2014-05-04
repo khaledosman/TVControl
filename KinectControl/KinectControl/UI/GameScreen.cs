@@ -32,6 +32,7 @@ namespace KinectControl.UI
         private ContentManager content;
         private Song[] songsarray;
         private SpriteBatch spriteBatch;
+        protected PrimitiveBatch PrimitiveBatch { get; private set; }
         public bool enablePause;
         public bool screenPaused;
         private SpriteFont font;
@@ -93,6 +94,7 @@ namespace KinectControl.UI
             frameNumber = Kinect.FramesCount;
             content = ScreenManager.Game.Content;
             spriteBatch = ScreenManager.SpriteBatch;
+            PrimitiveBatch = new PrimitiveBatch(ScreenManager.GraphicsDevice);
             font = content.Load<SpriteFont>("SpriteFont1");
             songs = MyExtension.LoadListContent<Song>(content, "Audio\\");
             songsarray = songs.ToArray();

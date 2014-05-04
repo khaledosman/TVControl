@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using KinectControl.Common;
 using System.Text;
 using Microsoft.Xna.Framework.Media;
+using Microsoft.Kinect;
 
 namespace KinectControl.Screens
 {
@@ -16,7 +17,7 @@ namespace KinectControl.Screens
         private Kinect kinect;
         private string gesture;
         private GraphicsDevice graphics;
-        private int screenWidth,screenHeight;
+        private int screenWidth, screenHeight;
         private Button button;
         private HandCursor hand;
         private ContentManager content;
@@ -29,6 +30,15 @@ namespace KinectControl.Screens
         VideoPlayer player;
         Texture2D videoTexture;
 
+        TvManager tv;
+
+        PopupScreen tvPopup;
+
+        Texture2D arrowTex;
+
+        float leftAngle, leftDist;
+        float rightAngle, rightDist;
+
         public string Text
         {
             get { return text; }
@@ -36,7 +46,7 @@ namespace KinectControl.Screens
         }
         public MainScreen()
         {
-            
+
         }
 
         public override void Initialize()
@@ -51,11 +61,16 @@ namespace KinectControl.Screens
             Text = "1)This Application allows you to control home devices by providing voice and gesture recognition systems. \n2)The avatar on top right represents your distance from the kinect sensor.";
             textPosition = new Vector2(75, 145);
             textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);
+
+            tv = new TvManager();
+            tvPopup = new PopupScreen();
+            ScreenManager.AddScreen(tvPopup);
+
             base.Initialize();
         }
         void button_Clicked(object sender, System.EventArgs a)
         {
-           // ScreenManager.Kinect.comm.ClosePort();
+            // ScreenManager.Kinect.comm.ClosePort();
             //this.Remove();
             kinect.CloseKinect(kinect.nui);
             this.ScreenManager.Game.Exit();
@@ -79,6 +94,9 @@ namespace KinectControl.Screens
             hand.LoadContent(content);
             button.LoadContent(content);
             textToDraw = WrapText(font2, text, 9000);
+
+            arrowTex = content.Load<Texture2D>("Textures/Arrow");
+
             base.LoadContent();
         }
         public override void Update(GameTime gameTime)
@@ -89,14 +107,29 @@ namespace KinectControl.Screens
             gesture = kinect.Gesture;
             if (FrameNumber % 240 == 0)
                 kinect.Gesture = "";
-       /*if (player.State == MediaState.Stopped)
-        {
-            player.IsLooped = true;
-            player.Play(video);
-        }*/
+            if (player.State == MediaState.Stopped)
+            {
+                player.IsLooped = true;
+                player.Play(video);
+            }
+
+            var skel = kinect.trackedSkeleton;
+            if (skel != null)
+            {
+                leftAngle = skel.GetRotationZ2(JointType.WristLeft, JointType.HipLeft) + 0.62f;
+                leftDist = skel.GetDistance(JointType.WristLeft, JointType.HipLeft, 'z') - 0.2f;
+
+                rightAngle = skel.GetRotationZ2(JointType.WristRight, JointType.HipRight) - 0.62f;
+                rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
+
+                tv.UpdateValues(leftAngle, rightAngle, leftDist > 0 && rightDist > 0);
+                tvPopup.message = tv.Status.Show();
+            }
+
             base.Update(gameTime);
         }
-          public string WrapText(SpriteFont spriteFont, string text, float maxLineWidth)
+
+        public string WrapText(SpriteFont spriteFont, string text, float maxLineWidth)
         {
             string[] words = text.Split(' ');
 
@@ -129,7 +162,7 @@ namespace KinectControl.Screens
             spriteBatch.Begin();
             spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
             if (!(gesture.Equals("")))
-            spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500,500), Color.Orange);
+                spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
             if (player.State != MediaState.Stopped)
                 videoTexture = player.GetTexture();
 
@@ -143,15 +176,35 @@ namespace KinectControl.Screens
             // Draw the video, if we have a texture to draw.
             if (videoTexture != null)
             {
-                spriteBatch.Begin();
+                //spriteBatch.Begin();
                 spriteBatch.Draw(videoTexture, screen, Color.White);
-                spriteBatch.End();
+                //spriteBatch.End();
             }
 
             spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);
             button.Draw(spriteBatch);
             hand.Draw(spriteBatch);
+
+            if (leftDist > 0 && rightDist > 0)
+            {
+                spriteBatch.Draw(arrowTex, new Vector2(100, 660), null, Color.OrangeRed, leftAngle,
+                    new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
+                spriteBatch.Draw(arrowTex, new Vector2(1180, 660), null, Color.OrangeRed, rightAngle,
+                    new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
+            }
+
             spriteBatch.End();
+
+            //PrimitiveBatch.Begin(PrimitiveType.TriangleList, null);
+
+            //var leftTrans = Matrix.CreateRotationZ(leftAngle);
+
+            //PrimitiveBatch.AddVertex(new Vector2(-580, 280), Color.OrangeRed, Vector2.Zero);
+            //PrimitiveBatch.AddVertex(new Vector2(-588, 280), Color.OrangeRed, Vector2.Zero);
+            //PrimitiveBatch.AddVertex(new Vector2(-584, 220), Color.OrangeRed, Vector2.Zero);
+
+            //PrimitiveBatch.End();
+
             base.Draw(gameTime);
         }
     }
