@@ -195,10 +195,11 @@ namespace KinectControl.Common
             swipeRightSegments[2] = new SwipeRightSegment3();
             gestureController.AddGesture(GestureType.SwipeRight, swipeRightSegments);
 
-            IRelativeGestureSegment[] raiseHandSegments = new IRelativeGestureSegment[2];
-            raiseHandSegments[0] = new RaiseHandSegment1();
-            raiseHandSegments[1] = new RaiseHandSegment2();
-            gestureController.AddGesture(GestureType.RaiseHand, raiseHandSegments);
+            IRelativeGestureSegment[] zoomOutSegments = new IRelativeGestureSegment[2];
+            zoomOutSegments[0] = new ZoomSegment1();
+            zoomOutSegments[1] = new ZoomSegment2();
+            //zoomOutSegments[2] = new ZoomSegment3();
+            gestureController.AddGesture(GestureType.ZoomOut, zoomOutSegments);
 
             gestureController.GestureRecognized += OnGestureRecognized;
         }
@@ -231,17 +232,10 @@ namespace KinectControl.Common
         }
         public void InitializeVoiceGrammar()
         {
-            commands = new string[10];
-            commands[0] = "play mediaplayer";
-            commands[1] = "stop";
-            commands[2] = "next";
-            commands[3] = "previous";
-            commands[4] = "mute";
-            commands[5] = "unmute";
-            commands[6] = "resume";
-            commands[7] = "play project music";
-            commands[8] = "device one";
-            commands[9] = "device two";
+            commands = new string[3];
+            commands[0] = "Open";
+            commands[1] = "Close";
+            commands[2] = "Help";
             _voiceCommands = new VoiceCommands(nui, commands);
             var voiceThread = new Thread(_voiceCommands.StartAudioStream);
             voiceThread.Start();
@@ -345,7 +339,7 @@ namespace KinectControl.Common
         /// </summary>
         /// <param name="sender">object sending the event</param>
         /// <param name="e">event arguments</param>
-        private void InteractionFrameReady(object sender, InteractionFrameReadyEventArgs e)
+      /*  private void InteractionFrameReady(object sender, InteractionFrameReadyEventArgs e)
         {
             // Check for a null userInfos since we may still get posted events
             // from the stream after we have unregistered our event handler and
@@ -437,7 +431,7 @@ namespace KinectControl.Common
                     Console.WriteLine("User '{0}' left scene at time {1}", id, timestamp);
                 }
             }
-        }
+        }*/
         /// <summary>
         /// Handler for the Kinect sensor's SkeletonFrameReady event
         /// </summary>
@@ -474,6 +468,7 @@ namespace KinectControl.Common
                                 this.trackedSkeleton = skeleton;
                             }
                         }
+                      //  trackedSkeleton = skeletons[0];
                         framesCount++;
                         if (trackedSkeleton != null)
                         {
@@ -485,7 +480,7 @@ namespace KinectControl.Common
                           //  EnableNearModeSkeletalTracking();
                             if (GenerateDepth() > 140)
                             {
-                                this.interactionStream.InteractionFrameReady += this.InteractionFrameReady;
+                                //this.interactionStream.InteractionFrameReady += this.InteractionFrameReady;
                                 gestureController.UpdateAllGestures(trackedSkeleton);
                             }
                         }

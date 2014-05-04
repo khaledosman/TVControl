@@ -128,7 +128,6 @@
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\Device.cs" />
     <Compile Include="Gestures\Gesture.cs" />
-    <Compile Include="Gestures\RaiseHandGesture.cs" />
     <Compile Include="Gestures\GestureController.cs" />
     <Compile Include="Gestures\GestureEnumTypes.cs" />
     <Compile Include="Gestures\GestureEventArgs.cs" />
@@ -141,6 +140,8 @@
     <Compile Include="Gestures\SwipeUpGesture.cs" />
     <Compile Include="Common\VoiceCommands.cs" />
     <Compile Include="Gestures\WaveGesture.cs" />
+    <Compile Include="Gestures\WaveRightSegments.cs" />
+    <Compile Include="Gestures\ZoomSegments.cs" />
     <Compile Include="Screens\FadingScreen.cs" />
     <Compile Include="Screens\IntroScreen.cs" />
     <Compile Include="Screens\MainScreen.cs" />

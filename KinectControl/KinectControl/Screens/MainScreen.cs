@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using KinectControl.Common;
 using System.Text;
+using Microsoft.Xna.Framework.Media;
 
 namespace KinectControl.Screens
 {
@@ -24,6 +25,10 @@ namespace KinectControl.Screens
         private string text;
         private Rectangle textBox;
         private Vector2 textPosition;
+        Video video;
+        VideoPlayer player;
+        Texture2D videoTexture;
+
         public string Text
         {
             get { return text; }
@@ -67,6 +72,9 @@ namespace KinectControl.Screens
             gradientTexture = content.Load<Texture2D>("Textures/gradientTexture");
             font = content.Load<SpriteFont>("SpriteFont1");
             font2 = content.Load<SpriteFont>("Fontopo");
+            video = content.Load<Video>("video");
+            //video = content.Load<Video>("Videos\\Wildlife");
+            player = new VideoPlayer();
             //font2.LineSpacing = 21;
             hand.LoadContent(content);
             button.LoadContent(content);
@@ -81,6 +89,11 @@ namespace KinectControl.Screens
             gesture = kinect.Gesture;
             if (FrameNumber % 240 == 0)
                 kinect.Gesture = "";
+       /*if (player.State == MediaState.Stopped)
+        {
+            player.IsLooped = true;
+            player.Play(video);
+        }*/
             base.Update(gameTime);
         }
           public string WrapText(SpriteFont spriteFont, string text, float maxLineWidth)
@@ -117,6 +130,24 @@ namespace KinectControl.Screens
             spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
             if (!(gesture.Equals("")))
             spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500,500), Color.Orange);
+            if (player.State != MediaState.Stopped)
+                videoTexture = player.GetTexture();
+
+            // Drawing to the rectangle will stretch the 
+            // video to fill the screen
+            Rectangle screen = new Rectangle(graphics.Viewport.X,
+                graphics.Viewport.Y,
+                graphics.Viewport.Width,
+                graphics.Viewport.Height);
+
+            // Draw the video, if we have a texture to draw.
+            if (videoTexture != null)
+            {
+                spriteBatch.Begin();
+                spriteBatch.Draw(videoTexture, screen, Color.White);
+                spriteBatch.End();
+            }
+
             spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);
             button.Draw(spriteBatch);
             hand.Draw(spriteBatch);

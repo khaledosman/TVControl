@@ -33,7 +33,7 @@ namespace KinectControl.Common
         SwipeDown,
         SwipeLeft,
         SwipeRight,
-        RaiseHand,
+        ZoomOut,
         JoinedHands,
     }
 }
