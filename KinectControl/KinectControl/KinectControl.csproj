@@ -140,7 +140,6 @@
     <Compile Include="Gestures\SwipeUpGesture.cs" />
     <Compile Include="Common\VoiceCommands.cs" />
     <Compile Include="Gestures\WaveGesture.cs" />
-    <Compile Include="Gestures\WaveRightSegments.cs" />
     <Compile Include="Gestures\ZoomSegments.cs" />
     <Compile Include="KinectExtensions.cs" />
     <Compile Include="PrimitiveBatch.cs" />
@@ -153,7 +152,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="TvManager.cs" />
+    <Compile Include="Common\TvManager.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="UI\GameScreen.cs" />
     <Compile Include="UI\HandCursor.cs" />

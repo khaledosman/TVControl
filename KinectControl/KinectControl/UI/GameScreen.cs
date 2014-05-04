@@ -26,11 +26,11 @@ namespace KinectControl.UI
     /// </summary>
     public abstract class GameScreen
     {
-        private MediaLibrary sampleMediaLibrary;
+        //private MediaLibrary sampleMediaLibrary;
         private Random random;
-        private int playQueue;
+        //private int playQueue;
         private ContentManager content;
-        private Song[] songsarray;
+        //private Song[] songsarray;
         private SpriteBatch spriteBatch;
         protected PrimitiveBatch PrimitiveBatch { get; private set; }
         public bool enablePause;
@@ -48,7 +48,7 @@ namespace KinectControl.UI
             }
         }
         private UserAvatar userAvatar;
-        private List<Song> songs;
+        //private List<Song> songs;
         public UserAvatar UserAvatar
         {
             get { return userAvatar; }
@@ -96,11 +96,11 @@ namespace KinectControl.UI
             spriteBatch = ScreenManager.SpriteBatch;
             PrimitiveBatch = new PrimitiveBatch(ScreenManager.GraphicsDevice);
             font = content.Load<SpriteFont>("SpriteFont1");
-            songs = MyExtension.LoadListContent<Song>(content, "Audio\\");
-            songsarray = songs.ToArray();
-            sampleMediaLibrary = new MediaLibrary();
+         //   songs = MyExtension.LoadListContent<Song>(content, "Audio\\");
+            //songsarray = songs.ToArray();
+           // sampleMediaLibrary = new MediaLibrary();
             random = new Random();
-            MediaPlayer.Stop(); // stop current audio playback 
+            //MediaPlayer.Stop(); // stop current audio playback 
             // generate a random valid index into Albums
             voiceCommands = ScreenManager.Kinect.voiceCommands;
             if (showAvatar)
@@ -155,7 +155,7 @@ namespace KinectControl.UI
                 voiceCommands.HeardString = "";
             }
             frameNumber++;
-            if (voiceCommands != null)
+            /*if (voiceCommands != null)
             {
                 switch (voiceCommands.HeardString)
                 {
@@ -167,7 +167,7 @@ namespace KinectControl.UI
                             /*
                                                         screenManager.AddScreen(new PauseScreen());
                              * MediaPlayer.PlayPosition.Minutes;
-                             */
+                             *
                         }
                         break;
                     case "stop":
@@ -234,7 +234,7 @@ namespace KinectControl.UI
                     //    break;
                     default: break;
                 }
-            }
+            }*/
         }
              
 

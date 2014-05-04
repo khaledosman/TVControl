@@ -31,8 +31,8 @@ namespace KinectControl.Common
         }
         #endregion
 
-        #region KinectInteraction
-        private MyInteractionClient myInteractionClient;
+  /*      #region KinectInteraction
+       private MyInteractionClient myInteractionClient;
         private DepthImagePixel[] depthBuffer;
         /// <summary>
         /// Intermediate storage for the user information received from interaction stream.
@@ -43,6 +43,7 @@ namespace KinectControl.Common
         /// </summary>
         private InteractionStream interactionStream;
         #endregion
+   */
 
         #region Kinect variables
         /// <summary>
@@ -87,7 +88,7 @@ namespace KinectControl.Common
             //this.interactionStream.Dispose();
             //this.interactionStream = null;
             this.skeletons = null;
-            this.userInfos = null;
+            //this.userInfos = null;
             sensor.AudioSource.Stop();
             sensor.ColorStream.Disable();
             sensor.DepthStream.Disable();
@@ -215,10 +216,10 @@ namespace KinectControl.Common
         private void InitializeInteractions()
         {
             // Allocate space to put the skeleton and interaction data we'll receive
-            this.userInfos = new UserInfo[InteractionFrame.UserInfoArrayLength];
+            //this.userInfos = new UserInfo[InteractionFrame.UserInfoArrayLength];
             nui.DepthFrameReady += this.SensorDepthFrameReady;
-            myInteractionClient = new MyInteractionClient();
-            this.interactionStream = new InteractionStream(nui, myInteractionClient);
+            //myInteractionClient = new MyInteractionClient();
+            //this.interactionStream = new InteractionStream(nui, myInteractionClient);
         }
 
         public void InitializeDevices()
@@ -318,12 +319,12 @@ namespace KinectControl.Common
             {
                 if (null != depthFrame)
                 {
-                    depthBuffer = new DepthImagePixel[depthFrame.PixelDataLength];
-                    depthFrame.CopyDepthImagePixelDataTo(depthBuffer);
+                   // depthBuffer = new DepthImagePixel[depthFrame.PixelDataLength];
+                    //depthFrame.CopyDepthImagePixelDataTo(depthBuffer);
                     try
                     {
                         // Hand data to Interaction framework to be processed
-                        this.interactionStream.ProcessDepth(depthBuffer, depthFrame.Timestamp);
+                      //  this.interactionStream.ProcessDepth(depthBuffer, depthFrame.Timestamp);
                     }
                     catch (InvalidOperationException)
                     {
@@ -460,7 +461,7 @@ namespace KinectControl.Common
                         var accelerometerReading = this.nui.AccelerometerGetCurrentReading();
 
                         // Hand data to Interaction framework to be processed
-                        this.interactionStream.ProcessSkeleton(this.skeletons, accelerometerReading, skeletonFrame.Timestamp);
+                        //this.interactionStream.ProcessSkeleton(this.skeletons, accelerometerReading, skeletonFrame.Timestamp);
                         for (int i = 0; i < this.skeletons.Length; i++)
                         {
                             this.trackedSkeleton = this.skeletons.OrderBy(s => s.Position.Z)

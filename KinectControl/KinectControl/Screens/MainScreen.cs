@@ -18,14 +18,14 @@ namespace KinectControl.Screens
         private string gesture;
         private GraphicsDevice graphics;
         private int screenWidth, screenHeight;
-        private Button button;
-        private HandCursor hand;
+        //private Button button;
+        //private HandCursor hand;
         private ContentManager content;
         private Texture2D gradientTexture;
-        private string textToDraw;
+        //private string textToDraw;
         private string text;
-        private Rectangle textBox;
-        private Vector2 textPosition;
+        //private Rectangle textBox;
+        //private Vector2 textPosition;
         private Skeleton skel;
         Video video;
         VideoPlayer player;
@@ -54,14 +54,14 @@ namespace KinectControl.Screens
         {
             //showAvatar = false;
             enablePause = false;
-            button = new Button();
+    /*        button = new Button();
             hand = new HandCursor();
             hand.Initialize(ScreenManager.Kinect);
             button.Initialize("Buttons/ok", this.ScreenManager.Kinect, new Vector2(820, 350));
             button.Clicked += new Button.ClickedEventHandler(button_Clicked);
             Text = "1)This Application allows you to control home devices by providing voice and gesture recognition systems. \n2)The avatar on top right represents your distance from the kinect sensor.";
             textPosition = new Vector2(75, 145);
-            textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);
+            textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);*/
 
             tv = new TvManager();
             tvPopup = new PopupScreen("");
@@ -92,9 +92,9 @@ namespace KinectControl.Screens
             //video = content.Load<Video>("Videos\\Wildlife");
             player = new VideoPlayer();
             //font2.LineSpacing = 21;
-            hand.LoadContent(content);
-            button.LoadContent(content);
-            textToDraw = WrapText(font2, text, 9000);
+            //hand.LoadContent(content);
+            //button.LoadContent(content);
+            //textToDraw = WrapText(font2, text, 9000);
 
             arrowTex = content.Load<Texture2D>("Textures/Arrow");
 
