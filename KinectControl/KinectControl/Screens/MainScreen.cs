@@ -124,7 +124,7 @@ namespace KinectControl.Screens
 
                 tv.UpdateValues(leftAngle, rightAngle, leftDist > 0 && rightDist > 0);
                 tvPopup.message = tv.Status;
-                tvPopup.Update(gameTime);
+               // tvPopup.Update(gameTime);
             }
 
             base.Update(gameTime);
@@ -163,7 +163,8 @@ namespace KinectControl.Screens
             spriteBatch.Begin();
             spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
             if (!(gesture.Equals("")))
-                spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
+                tvPopup.message = gesture;
+               // spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
             if (player.State != MediaState.Stopped)
                 videoTexture = player.GetTexture();
 

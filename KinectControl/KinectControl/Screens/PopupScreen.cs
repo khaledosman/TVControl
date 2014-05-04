@@ -18,9 +18,9 @@ namespace KinectControl.Screens
         public string message;
         private Texture2D gradientTexture;
 
-        public PopupScreen() { message = "No user detected, Game paused"; counter = 1; }
-        public PopupScreen(string message) { this.message = message; counter = 1; }
-        public PopupScreen(string message, int counter) { this.message = message; this.counter = counter; }
+        public PopupScreen() { message = "No user detected, Game paused"; counter = 1; showAvatar = false; }
+        public PopupScreen(string message) { this.message = message; counter = 1; showAvatar = false; }
+        public PopupScreen(string message, int counter) { this.message = message; this.counter = counter; showAvatar = false; }
 
         public override void LoadContent()
         {
