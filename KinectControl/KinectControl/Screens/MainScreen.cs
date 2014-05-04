@@ -26,6 +26,7 @@ namespace KinectControl.Screens
         private string text;
         private Rectangle textBox;
         private Vector2 textPosition;
+        private Skeleton skel;
         Video video;
         VideoPlayer player;
         Texture2D videoTexture;
@@ -113,8 +114,9 @@ namespace KinectControl.Screens
                 player.Play(video);
             }
 
-            var skel = kinect.trackedSkeleton;
-            if (skel != null)
+             skel = kinect.trackedSkeleton;
+            if ((skel != null && skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y) &&
+                skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
             {
                 leftAngle = skel.GetRotationZ2(JointType.WristLeft, JointType.HipLeft) + 0.62f;
                 leftDist = skel.GetDistance(JointType.WristLeft, JointType.HipLeft, 'z') - 0.2f;
@@ -187,7 +189,9 @@ namespace KinectControl.Screens
          //   button.Draw(spriteBatch);
           // hand.Draw(spriteBatch);
 
-            if (leftDist > 0 && rightDist > 0)
+            if (leftDist > 0 && rightDist > 0 && 
+                skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y &&
+                skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
             {
                 spriteBatch.Draw(arrowTex, new Vector2(100, 660), null, Color.OrangeRed, leftAngle,
                     new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
