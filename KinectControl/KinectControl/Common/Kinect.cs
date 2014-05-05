@@ -197,11 +197,27 @@ namespace KinectControl.Common
             swipeRightSegments[2] = new SwipeRightSegment3();
             gestureController.AddGesture(GestureType.SwipeRight, swipeRightSegments);
 
-            IRelativeGestureSegment[] zoomOutSegments = new IRelativeGestureSegment[2];
-            zoomOutSegments[0] = new ZoomSegment1();
+            IRelativeGestureSegment[] menuSegments = new IRelativeGestureSegment[20];
+            MenuSegment1 menuSegment = new MenuSegment1();
+            for (int i = 0; i < 20; i++)
+            {
+                // gesture consists of the same thing 20 times 
+                menuSegments[i] = menuSegment;
+            }
+            gestureController.AddGesture(GestureType.Menu, menuSegments);
+
+            IRelativeGestureSegment[] zoomInSegments = new IRelativeGestureSegment[3];
+            zoomInSegments[0] = new ZoomSegment1();
+            zoomInSegments[1] = new ZoomSegment2();
+            zoomInSegments[2] = new ZoomSegment3();
+            gestureController.AddGesture(GestureType.ZoomIn, zoomInSegments);
+
+            IRelativeGestureSegment[] zoomOutSegments = new IRelativeGestureSegment[3];
+            zoomOutSegments[0] = new ZoomSegment3();
             zoomOutSegments[1] = new ZoomSegment2();
-            //zoomOutSegments[2] = new ZoomSegment3();
+            zoomOutSegments[2] = new ZoomSegment1();
             gestureController.AddGesture(GestureType.ZoomOut, zoomOutSegments);
+
 
             gestureController.GestureRecognized += OnGestureRecognized;
         }
@@ -234,10 +250,9 @@ namespace KinectControl.Common
         }
         public void InitializeVoiceGrammar()
         {
-            commands = new string[3];
+            commands = new string[2];
             commands[0] = "Open";
             commands[1] = "Close";
-            commands[2] = "Help";
             _voiceCommands = new VoiceCommands(nui, commands);
             var voiceThread = new Thread(_voiceCommands.StartAudioStream);
             voiceThread.Start();
@@ -525,6 +540,15 @@ namespace KinectControl.Common
                     break;
                 case GestureType.JoinedHands:
                     Gesture = "JoinedHands";
+                    break;
+                case GestureType.Menu:
+                    Gesture = "Menu";
+                    break;
+                case GestureType.ZoomIn:
+                    Gesture = "Zoom In";
+                    break;
+                case GestureType.ZoomOut:
+                    Gesture = "Zoom out";
                     break;
             }
         }

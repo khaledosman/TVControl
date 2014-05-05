@@ -40,7 +40,7 @@ namespace KinectControl
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            screenManager.AddScreen(new MainScreen());
+            screenManager.AddScreen(new IntroScreen());
             base.LoadContent();
         }
 

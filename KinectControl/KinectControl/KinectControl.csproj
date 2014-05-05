@@ -134,6 +134,7 @@
     <Compile Include="Gestures\IRelativeGestureSegment.cs" />
     <Compile Include="Common\Kinect.cs" />
     <Compile Include="Common\MyExtension.cs" />
+    <Compile Include="Gestures\MenuSegments.cs" />
     <Compile Include="Gestures\SwipeDownGesture.cs" />
     <Compile Include="Gestures\SwipeLeftGesture.cs" />
     <Compile Include="Gestures\SwipeRightGesture.cs" />

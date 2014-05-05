@@ -34,6 +34,8 @@ namespace KinectControl.Common
         SwipeLeft,
         SwipeRight,
         ZoomOut,
+        ZoomIn,
+        Menu,
         JoinedHands,
     }
 }
