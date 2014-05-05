@@ -107,7 +107,10 @@ namespace KinectControl.Screens
             //button.Clicked += button_Clicked;
             gesture = kinect.Gesture;
             if (FrameNumber % 240 == 0)
+            {
                 kinect.Gesture = "";
+                tvPopup.message = "";
+            }
             if (player.State == MediaState.Stopped)
             {
                 player.IsLooped = true;

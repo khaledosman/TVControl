@@ -27,14 +27,8 @@ namespace KinectControl.Common
             if (!isControlling)
             {
                 volume = (int)volume;
-                if (volume < 0)
-                    volume = 0;
                 channel = (int)channel;
-                if (channel < 0)
-                    channel = 0;
                 brightness = (int)brightness;
-                if (brightness < 0)
-                brightness = 0;
                 Status = "";
 
                 return;
@@ -43,16 +37,23 @@ namespace KinectControl.Common
             if (leftAngle > -0.2f) // VOLUME!
             {
                 volume += MathHelper.Clamp(rightAngle, -0.4f, 0.4f) / 4f;
+                if (volume < 0)
+                    volume = 0;
+                
                 Status = "Volume: " + Volume;
             }
             else if (leftAngle > -0.4f) // CHANNEL!
             {
                 channel += MathHelper.Clamp(rightAngle, -0.4f, 0.4f) / 4f;
+                if (channel < 0)
+                    channel = 0;
                 Status = "Channel: " + Channel;
             }
             else if (leftAngle > -0.6f) // BRIGHTNESS
             {
                 brightness += MathHelper.Clamp(rightAngle, -0.4f, 0.4f) / 4f;
+                if (brightness < 0)
+                    brightness = 0;
                 Status = "Brightness: " + Brightness;
             }
         }

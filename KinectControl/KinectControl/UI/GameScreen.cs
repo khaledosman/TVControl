@@ -150,7 +150,7 @@ namespace KinectControl.UI
                 }
             }
 
-            if (frameNumber % 360 == 0 && voiceCommands!=null)
+            if (frameNumber % 240 == 0 && voiceCommands!=null)
             {
                 voiceCommands.HeardString = "";
             }
