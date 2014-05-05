@@ -188,15 +188,15 @@ namespace KinectControl.Screens
             //spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);
          //   button.Draw(spriteBatch);
           // hand.Draw(spriteBatch);
-
+            if(skel!=null)
             if (leftDist > 0 && rightDist > 0 && 
                 skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y &&
                 skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
             {
                 spriteBatch.Draw(arrowTex, new Vector2(100, 660), null, Color.OrangeRed, leftAngle,
-                    new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
+                    new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
                 spriteBatch.Draw(arrowTex, new Vector2(1180, 660), null, Color.OrangeRed, rightAngle,
-                    new Vector2(3.5f, 80), 1, SpriteEffects.None, 0);
+                    new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
                 showAvatar = true;
             }
 
