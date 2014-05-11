@@ -54,14 +54,14 @@ namespace KinectControl.Screens
         {
             //showAvatar = false;
             enablePause = false;
-    /*        button = new Button();
-            hand = new HandCursor();
-            hand.Initialize(ScreenManager.Kinect);
-            button.Initialize("Buttons/ok", this.ScreenManager.Kinect, new Vector2(820, 350));
-            button.Clicked += new Button.ClickedEventHandler(button_Clicked);
-            Text = "1)This Application allows you to control home devices by providing voice and gesture recognition systems. \n2)The avatar on top right represents your distance from the kinect sensor.";
-            textPosition = new Vector2(75, 145);
-            textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);*/
+            /*        button = new Button();
+                    hand = new HandCursor();
+                    hand.Initialize(ScreenManager.Kinect);
+                    button.Initialize("Buttons/ok", this.ScreenManager.Kinect, new Vector2(820, 350));
+                    button.Clicked += new Button.ClickedEventHandler(button_Clicked);
+                    Text = "1)This Application allows you to control home devices by providing voice and gesture recognition systems. \n2)The avatar on top right represents your distance from the kinect sensor.";
+                    textPosition = new Vector2(75, 145);
+                    textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);*/
 
             tv = new TvManager();
             tvPopup = new PopupScreen("");
@@ -102,7 +102,7 @@ namespace KinectControl.Screens
         }
         public override void Update(GameTime gameTime)
         {
-          //  hand.Update(gameTime);
+            //  hand.Update(gameTime);
             //button.Update(gameTime);
             //button.Clicked += button_Clicked;
             gesture = kinect.Gesture;
@@ -117,19 +117,20 @@ namespace KinectControl.Screens
                 player.Play(video);
             }
 
-             skel = kinect.trackedSkeleton;
-            if ((skel != null && skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y) &&
-                skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
+            skel = kinect.trackedSkeleton;
+            if ((skel != null))
+            //&& skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y) &&
+            //skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
             {
-                leftAngle = skel.GetRotationZ2(JointType.WristLeft, JointType.HipLeft) + 0.62f;
+                leftAngle = skel.GetRotationZ2(JointType.WristLeft, JointType.HipLeft) + 0.32f;
                 leftDist = skel.GetDistance(JointType.WristLeft, JointType.HipLeft, 'z') - 0.2f;
 
-                rightAngle = skel.GetRotationZ2(JointType.WristRight, JointType.HipRight) - 0.62f;
+                rightAngle = skel.GetRotationZ2(JointType.WristRight, JointType.HipRight) - 0.32f;
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
 
                 tv.UpdateValues(leftAngle, rightAngle, leftDist > 0 && rightDist > 0);
                 tvPopup.message = tv.Status;
-               // tvPopup.Update(gameTime);
+                // tvPopup.Update(gameTime);
             }
 
             base.Update(gameTime);
@@ -169,7 +170,7 @@ namespace KinectControl.Screens
             spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
             if (!(gesture.Equals("")))
                 tvPopup.message = gesture;
-               // spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
+            // spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
             if (player.State != MediaState.Stopped)
                 videoTexture = player.GetTexture();
 
@@ -189,19 +190,19 @@ namespace KinectControl.Screens
             }
 
             //spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);
-         //   button.Draw(spriteBatch);
-          // hand.Draw(spriteBatch);
-            if(skel!=null)
-            if (leftDist > 0 && rightDist > 0 && 
-                skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y &&
-                skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
-            {
-                spriteBatch.Draw(arrowTex, new Vector2(100, 660), null, Color.OrangeRed, leftAngle,
-                    new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
-                spriteBatch.Draw(arrowTex, new Vector2(1180, 660), null, Color.OrangeRed, rightAngle,
-                    new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
-                showAvatar = true;
-            }
+            //   button.Draw(spriteBatch);
+            // hand.Draw(spriteBatch);
+            if (skel != null)
+                if (leftDist > 0 && rightDist > 0)
+                //skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y &&
+                //skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
+                {
+                    spriteBatch.Draw(arrowTex, new Vector2(100, 660), null, Color.OrangeRed, leftAngle,
+                        new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
+                    spriteBatch.Draw(arrowTex, new Vector2(1180, 660), null, Color.OrangeRed, rightAngle,
+                        new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
+                    showAvatar = true;
+                }
 
             spriteBatch.End();
             tvPopup.Draw(gameTime);

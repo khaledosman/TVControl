@@ -46,7 +46,7 @@ namespace KinectControl.Screens
         public override void Draw(GameTime gameTime)
         {
             Vector2 viewportSize = new Vector2(screenWidth, screenHeight);
-            Vector2 textSize = font.MeasureString(message);
+            Vector2 textSize = font.MeasureString(message ?? "");
             Vector2 textPosition = (viewportSize - textSize) / 2;
             int hPad = Constants.hPad;
             int vPad = Constants.vPad;

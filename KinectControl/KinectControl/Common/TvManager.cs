@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace KinectControl.Common
 {
@@ -17,7 +18,7 @@ namespace KinectControl.Common
 
         public TvManager()
         {
-            volume = 20;
+            volume = 0;
             channel = 0;
             brightness = 50;
         }
@@ -34,26 +35,47 @@ namespace KinectControl.Common
                 return;
             }
 
-            if (leftAngle > -0.2f) // VOLUME!
+            var deadzone = 0.08f;
+
+            if (leftAngle > -0.3f) // VOLUME!
             {
-                volume += MathHelper.Clamp(rightAngle, -0.4f, 0.4f) / 4f;
-                if (volume < 0)
-                    volume = 0;
-                
+                if (Math.Abs(rightAngle) > deadzone)
+                {
+                    if (rightAngle > 0) rightAngle -= deadzone;
+                    else rightAngle += deadzone;
+
+                    volume += MathHelper.Clamp(rightAngle.Show(), -0.6f, 0.6f) / 4f;
+                    volume = MathHelper.Clamp(volume, 0, 20);
+                }
+
                 Status = "Volume: " + Volume;
             }
-            else if (leftAngle > -0.4f) // CHANNEL!
+            else if (leftAngle > -0.6f) // CHANNEL!
             {
-                channel += MathHelper.Clamp(rightAngle, -0.4f, 0.4f) / 4f;
+                if (Math.Abs(rightAngle) > deadzone)
+                {
+                    if (rightAngle > 0) rightAngle -= deadzone;
+                    else rightAngle += deadzone;
+
+                    channel += MathHelper.Clamp(rightAngle, -0.6f, 0.6f) / 6f;
+                }
                 if (channel < 0)
                     channel = 0;
+
                 Status = "Channel: " + Channel;
             }
-            else if (leftAngle > -0.6f) // BRIGHTNESS
+            else if (leftAngle > -0.9f) // BRIGHTNESS
             {
-                brightness += MathHelper.Clamp(rightAngle, -0.4f, 0.4f) / 4f;
+                if (Math.Abs(rightAngle) > deadzone)
+                {
+                    if (rightAngle > 0) rightAngle -= deadzone;
+                    else rightAngle += deadzone;
+
+                    brightness += MathHelper.Clamp(rightAngle, -0.6f, 0.6f) / 4f;
+                }
                 if (brightness < 0)
                     brightness = 0;
+
                 Status = "Brightness: " + Brightness;
             }
         }
