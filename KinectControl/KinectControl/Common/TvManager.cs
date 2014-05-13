@@ -18,14 +18,14 @@ namespace KinectControl.Common
 
         public TvManager()
         {
-            volume = 0;
+            volume = 20;
             channel = 0;
             brightness = 50;
         }
 
-        public void UpdateValues(float leftAngle, float rightAngle, bool isControlling)
+        public void UpdateValues(float leftAngle, float rightAngle, bool isLeftCtrl, bool isRightCtrl)
         {
-            if (!isControlling)
+            if (!isLeftCtrl)
             {
                 volume = (int)volume;
                 channel = (int)channel;
@@ -36,45 +36,46 @@ namespace KinectControl.Common
             }
 
             var deadzone = 0.08f;
+            var delta = MathHelper.ToRadians(30);
 
-            if (leftAngle > -0.3f) // VOLUME!
+            if (leftAngle > 0)
+                Status = "";
+            else if (leftAngle > -delta) // VOLUME!
             {
-                if (Math.Abs(rightAngle) > deadzone)
+                if (Math.Abs(rightAngle) > deadzone && isRightCtrl)
                 {
                     if (rightAngle > 0) rightAngle -= deadzone;
                     else rightAngle += deadzone;
 
-                    volume += MathHelper.Clamp(rightAngle.Show(), -0.6f, 0.6f) / 4f;
-                    volume = MathHelper.Clamp(volume, 0, 20);
+                    volume += MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2) / 4f;
+                    volume = MathHelper.Clamp(volume, 0, 100);
                 }
 
                 Status = "Volume: " + Volume;
             }
-            else if (leftAngle > -0.6f) // CHANNEL!
+            else if (leftAngle > -delta * 2) // CHANNEL!
             {
-                if (Math.Abs(rightAngle) > deadzone)
+                if (Math.Abs(rightAngle) > deadzone && isRightCtrl)
                 {
                     if (rightAngle > 0) rightAngle -= deadzone;
                     else rightAngle += deadzone;
 
-                    channel += MathHelper.Clamp(rightAngle, -0.6f, 0.6f) / 6f;
+                    channel += MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2) / 6f;
+                    channel = MathHelper.Clamp(channel, 0, 100);
                 }
-                if (channel < 0)
-                    channel = 0;
 
                 Status = "Channel: " + Channel;
             }
-            else if (leftAngle > -0.9f) // BRIGHTNESS
+            else if (leftAngle > -delta * 3) // BRIGHTNESS!
             {
-                if (Math.Abs(rightAngle) > deadzone)
+                if (Math.Abs(rightAngle) > deadzone && isRightCtrl)
                 {
                     if (rightAngle > 0) rightAngle -= deadzone;
                     else rightAngle += deadzone;
 
-                    brightness += MathHelper.Clamp(rightAngle, -0.6f, 0.6f) / 4f;
+                    brightness += MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2) / 4f;
+                    brightness = MathHelper.Clamp(brightness, 0, 100);
                 }
-                if (brightness < 0)
-                    brightness = 0;
 
                 Status = "Brightness: " + Brightness;
             }
