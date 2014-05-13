@@ -88,6 +88,9 @@ namespace KinectControl.UI
 
         Texture2D depthTex;
 
+        int? lastSkelId;
+        double depthTimer;
+
         /// <summary>
         /// LoadContent will be called only once before drawing and it's the place to load
         /// all of your content.
@@ -154,6 +157,19 @@ namespace KinectControl.UI
                             this.UnfreezeScreen();
                         }
                     }
+
+                var currSkel = screenManager.Kinect.trackedSkeleton;
+                int? currId = null;
+                if (currSkel != null) currId = currSkel.TrackingId;
+                
+                if (lastSkelId != currId)
+                {
+                    depthTimer = 2;
+                    lastSkelId = currId;
+                }
+
+                if (depthTimer > 0)
+                    depthTimer -= gameTime.ElapsedGameTime.TotalSeconds;
             }
 
             if (frameNumber % 240 == 0 && voiceCommands != null)
@@ -259,12 +275,14 @@ namespace KinectControl.UI
         {
             //if (showAvatar)
             //    userAvatar.Draw(gameTime);
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
 
             if (showAvatar && screenManager.Kinect.DepthData != null)
             {
                 depthTex.SetData(screenManager.Kinect.DepthData);
-                spriteBatch.Draw(depthTex, new Vector2(1280 - 320, 0), Color.White);
+
+                var a = MathHelper.Clamp((float)depthTimer, 0, 1);
+                spriteBatch.Draw(depthTex, new Vector2(1280 - 320, 0), new Color(1, 1, 1, a));
             }
 
             if (voiceCommands != null && !voiceCommands.HeardString.Equals(""))
