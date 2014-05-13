@@ -14,6 +14,7 @@ namespace KinectControl.Screens
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private SpriteFont font2;
+        private bool shouldPlay;
         private Kinect kinect;
         private string gesture;
         private GraphicsDevice graphics;
@@ -27,7 +28,8 @@ namespace KinectControl.Screens
         //private Rectangle textBox;
         //private Vector2 textPosition;
         private Skeleton skel;
-        Video video;
+        //Video video;
+        Video[] videos;
         VideoPlayer player;
         Texture2D videoTexture;
 
@@ -54,6 +56,7 @@ namespace KinectControl.Screens
         {
             //showAvatar = false;
             enablePause = false;
+            videos = new Video[1];
             /*        button = new Button();
                     hand = new HandCursor();
                     hand.Initialize(ScreenManager.Kinect);
@@ -64,7 +67,7 @@ namespace KinectControl.Screens
                     textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);*/
 
             tv = new TvManager();
-            tvPopup = new PopupScreen("");
+            tvPopup = new PopupScreen("",240);
             ScreenManager.AddScreen(tvPopup);
 
             base.Initialize();
@@ -88,7 +91,7 @@ namespace KinectControl.Screens
             gradientTexture = content.Load<Texture2D>("Textures/gradientTexture");
             font = content.Load<SpriteFont>("SpriteFont1");
             font2 = content.Load<SpriteFont>("Fontopo");
-            video = content.Load<Video>("video");
+            videos[0] = content.Load<Video>("video");
             //video = content.Load<Video>("Videos\\Wildlife");
             player = new VideoPlayer();
             //font2.LineSpacing = 21;
@@ -111,10 +114,25 @@ namespace KinectControl.Screens
                 kinect.Gesture = "";
                 tvPopup.message = "";
             }
-            if (player.State == MediaState.Stopped)
+            if (gesture.Equals("Joined Zoom"))
+            {
+                if (shouldPlay)
+                {
+                    shouldPlay = false;
+                    player.Volume = 0;
+                }
+                else
+                {
+                    shouldPlay = true;
+                    player.Volume = 1;
+                }
+                kinect.Gesture = "";
+            }
+
+            if (player.State == MediaState.Stopped && shouldPlay)
             {
                 player.IsLooped = true;
-                player.Play(video);
+                player.Play(videos[0]);
             }
 
             skel = kinect.trackedSkeleton;
@@ -134,6 +152,11 @@ namespace KinectControl.Screens
             }
 
             base.Update(gameTime);
+        }
+        public override void Remove()
+        {
+            ScreenManager.AddScreen(new BlankScreen());
+            base.Remove();
         }
 
         public string WrapText(SpriteFont spriteFont, string text, float maxLineWidth)
@@ -167,12 +190,15 @@ namespace KinectControl.Screens
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
+            //spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
             if (!(gesture.Equals("")))
                 tvPopup.message = gesture;
             // spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
-            if (player.State != MediaState.Stopped)
-                videoTexture = player.GetTexture();
+            if (shouldPlay)
+            {
+                if (player.State != MediaState.Stopped)
+                    videoTexture = player.GetTexture();
+            }
 
             // Drawing to the rectangle will stretch the 
             // video to fill the screen
@@ -184,9 +210,8 @@ namespace KinectControl.Screens
             // Draw the video, if we have a texture to draw.
             if (videoTexture != null)
             {
-                //spriteBatch.Begin();
+                if(shouldPlay)
                 spriteBatch.Draw(videoTexture, screen, Color.White);
-                //spriteBatch.End();
             }
 
             //spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);

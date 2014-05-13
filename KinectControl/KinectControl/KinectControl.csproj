@@ -144,6 +144,7 @@
     <Compile Include="Gestures\ZoomSegments.cs" />
     <Compile Include="KinectExtensions.cs" />
     <Compile Include="PrimitiveBatch.cs" />
+    <Compile Include="Screens\BlankScreen.cs" />
     <Compile Include="Screens\FadingScreen.cs" />
     <Compile Include="Screens\IntroScreen.cs" />
     <Compile Include="Screens\MainScreen.cs" />

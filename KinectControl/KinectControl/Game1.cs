@@ -14,7 +14,7 @@ namespace KinectControl
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        ScreenManager screenManager;
+        public static ScreenManager screenManager;
         public Kinect Kinect;
 
         public Game1()

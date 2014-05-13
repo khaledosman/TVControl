@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Media;
 using KinectControl.Common;
-using System.Collections.Generic;
 using System;
-using KinectControl.Screens;
 
 namespace KinectControl.UI
 {
@@ -139,7 +136,6 @@ namespace KinectControl.UI
                     {
                         //Freeze Screen, Show pause Screen\
                         screenPaused = true;
-                        ScreenManager.AddScreen(new PopupScreen());
                         this.FreezeScreen();
                     }
                     else if (userAvatar.Avatar.Equals(userAvatar.AllAvatars[2]) && screenPaused == true)
