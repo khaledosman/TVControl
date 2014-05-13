@@ -37,6 +37,7 @@ namespace KinectControl.Screens
 
         PopupScreen tvPopup;
 
+        Texture2D leftArcTex, rightArcTex;
         Texture2D arrowTex;
 
         float leftAngle, leftDist;
@@ -99,6 +100,8 @@ namespace KinectControl.Screens
             //button.LoadContent(content);
             //textToDraw = WrapText(font2, text, 9000);
 
+            leftArcTex = content.Load<Texture2D>("Textures/Left Arc");
+            rightArcTex = content.Load<Texture2D>("Textures/Right Arc");
             arrowTex = content.Load<Texture2D>("Textures/Arrow");
 
             base.LoadContent();
@@ -141,12 +144,20 @@ namespace KinectControl.Screens
             //skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
             {
                 leftAngle = skel.GetRotationZ2(JointType.WristLeft, JointType.HipLeft) + 0.32f;
+                if (skel.GetDistanceY(JointType.WristLeft, JointType.HipLeft) < 0)
+                    leftAngle -= MathHelper.Pi;
+                leftAngle = MathHelper.Clamp(leftAngle, -MathHelper.PiOver2, MathHelper.PiOver2);
+                
                 leftDist = skel.GetDistance(JointType.WristLeft, JointType.HipLeft, 'z') - 0.2f;
 
                 rightAngle = skel.GetRotationZ2(JointType.WristRight, JointType.HipRight) - 0.32f;
+                if (skel.GetDistanceY(JointType.WristRight, JointType.HipRight) < 0)
+                    rightAngle += MathHelper.Pi;
+                rightAngle = MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2);
+                
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
 
-                tv.UpdateValues(leftAngle, rightAngle, leftDist > 0 && rightDist > 0);
+                tv.UpdateValues(leftAngle, rightAngle, leftDist > 0, rightDist > 0);
                 tvPopup.message = tv.Status;
                 // tvPopup.Update(gameTime);
             }
@@ -218,14 +229,20 @@ namespace KinectControl.Screens
             //   button.Draw(spriteBatch);
             // hand.Draw(spriteBatch);
             if (skel != null)
-                if (leftDist > 0 && rightDist > 0)
+                if (leftDist > 0)
                 //skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y &&
                 //skel.Joints[JointType.WristRight].Position.Y > skel.Joints[JointType.ElbowRight].Position.Y)
                 {
-                    spriteBatch.Draw(arrowTex, new Vector2(100, 660), null, Color.OrangeRed, leftAngle,
-                        new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
-                    spriteBatch.Draw(arrowTex, new Vector2(1180, 660), null, Color.OrangeRed, rightAngle,
-                        new Vector2(3.5f, 80), 2f, SpriteEffects.None, 0);
+                    spriteBatch.Draw(leftArcTex, new Vector2(180, 660), null, Color.White, 0,
+                        new Vector2(160, 160), 1f, SpriteEffects.None, 0);
+                    spriteBatch.Draw(arrowTex, new Vector2(180, 660), null, Color.OrangeRed, leftAngle,
+                        new Vector2(7, 160), 1f, SpriteEffects.None, 0);
+
+                    spriteBatch.Draw(rightArcTex, new Vector2(1100, 660), null, Color.White, 0,
+                        new Vector2(160, 160), 1f, SpriteEffects.None, 0);
+                    if (rightDist > 0)
+                        spriteBatch.Draw(arrowTex, new Vector2(1100, 660), null, Color.OrangeRed, rightAngle,
+                            new Vector2(7, 160), 1f, SpriteEffects.None, 0);
                     showAvatar = true;
                 }
 

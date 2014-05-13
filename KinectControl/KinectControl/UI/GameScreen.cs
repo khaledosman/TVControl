@@ -82,6 +82,12 @@ namespace KinectControl.UI
             }
         }
         public bool showAvatar = true;
+
+        Texture2D depthTex;
+
+        int? lastSkelId;
+        double depthTimer;
+
         /// <summary>
         /// LoadContent will be called only once before drawing and it's the place to load
         /// all of your content.
@@ -93,9 +99,9 @@ namespace KinectControl.UI
             spriteBatch = ScreenManager.SpriteBatch;
             PrimitiveBatch = new PrimitiveBatch(ScreenManager.GraphicsDevice);
             font = content.Load<SpriteFont>("SpriteFont1");
-         //   songs = MyExtension.LoadListContent<Song>(content, "Audio\\");
+            //   songs = MyExtension.LoadListContent<Song>(content, "Audio\\");
             //songsarray = songs.ToArray();
-           // sampleMediaLibrary = new MediaLibrary();
+            // sampleMediaLibrary = new MediaLibrary();
             random = new Random();
             //MediaPlayer.Stop(); // stop current audio playback 
             // generate a random valid index into Albums
@@ -105,6 +111,8 @@ namespace KinectControl.UI
                 userAvatar = new UserAvatar(ScreenManager.Kinect, content, ScreenManager.GraphicsDevice, spriteBatch);
                 userAvatar.LoadContent();
             }
+
+            depthTex = new Texture2D(screenManager.GraphicsDevice, 320, 240);
         }
         /// <summary>
         /// Initializes the GameScreen.
@@ -117,7 +125,8 @@ namespace KinectControl.UI
         /// <summary>
         /// Unloads the content of GameScreen.
         /// </summary>
-        public virtual void UnloadContent() {
+        public virtual void UnloadContent()
+        {
         }
         /// <summary>
         /// Allows the game screen to run logic such as updating the world,
@@ -130,10 +139,9 @@ namespace KinectControl.UI
             {
                 userAvatar.Update(gameTime);
                 if (!IsFrozen)
-                if (enablePause)
-                {
-                    if (userAvatar.Avatar == userAvatar.AllAvatars[0])
+                    if (enablePause)
                     {
+<<<<<<< HEAD
                         //Freeze Screen, Show pause Screen\
                         screenPaused = true;
                         this.FreezeScreen();
@@ -142,11 +150,37 @@ namespace KinectControl.UI
                     {
                         //exit pause screen, unfreeze screen
                         this.UnfreezeScreen();
+=======
+                        if (userAvatar.Avatar == userAvatar.AllAvatars[0])
+                        {
+                            //Freeze Screen, Show pause Screen\
+                            screenPaused = true;
+                            ScreenManager.AddScreen(new PopupScreen());
+                            this.FreezeScreen();
+                        }
+                        else if (userAvatar.Avatar.Equals(userAvatar.AllAvatars[2]) && screenPaused == true)
+                        {
+                            //exit pause screen, unfreeze screen
+                            this.UnfreezeScreen();
+                        }
+>>>>>>> d41113bb3cef440a169b1a0bf9cfec35c1fd0f45
                     }
+
+                var currSkel = screenManager.Kinect.trackedSkeleton;
+                int? currId = null;
+                if (currSkel != null) currId = currSkel.TrackingId;
+                
+                if (lastSkelId != currId)
+                {
+                    depthTimer = 2;
+                    lastSkelId = currId;
                 }
+
+                if (depthTimer > 0)
+                    depthTimer -= gameTime.ElapsedGameTime.TotalSeconds;
             }
 
-            if (frameNumber % 240 == 0 && voiceCommands!=null)
+            if (frameNumber % 240 == 0 && voiceCommands != null)
             {
                 voiceCommands.HeardString = "";
             }
@@ -232,7 +266,7 @@ namespace KinectControl.UI
                 }
             }*/
         }
-             
+
 
         /// <summary>
         /// Removes the current screen.
@@ -247,11 +281,21 @@ namespace KinectControl.UI
         /// </summary>
         public virtual void Draw(GameTime gameTime)
         {
-            if (showAvatar)
-                userAvatar.Draw(gameTime);
-            spriteBatch.Begin();
-            if(voiceCommands!=null && !voiceCommands.HeardString.Equals(""))
-            spriteBatch.DrawString(font,"voice command: " + voiceCommands.HeardString, new Vector2(300,300), Color.Orange);
+            //if (showAvatar)
+            //    userAvatar.Draw(gameTime);
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied);
+
+            if (showAvatar && screenManager.Kinect.DepthData != null)
+            {
+                depthTex.SetData(screenManager.Kinect.DepthData);
+
+                var a = MathHelper.Clamp((float)depthTimer, 0, 1);
+                spriteBatch.Draw(depthTex, new Vector2(1280 - 320, 0), new Color(1, 1, 1, a));
+            }
+
+            if (voiceCommands != null && !voiceCommands.HeardString.Equals(""))
+                spriteBatch.DrawString(font, "voice command: " + voiceCommands.HeardString, new Vector2(300, 300), Color.Orange);
+
             spriteBatch.End();
         }
         public void FreezeScreen()
