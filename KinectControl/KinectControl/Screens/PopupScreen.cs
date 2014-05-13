@@ -29,7 +29,9 @@ namespace KinectControl.Screens
             spriteBatch = ScreenManager.SpriteBatch;
             screenHeight = graphics.Viewport.Height;
             screenWidth = graphics.Viewport.Width;
-            gradientTexture = content.Load<Texture2D>("Textures\\gradient");
+            //gradientTexture = content.Load<Texture2D>("Textures\\gradient");
+            gradientTexture = new Texture2D(graphics, 1, 1);
+            gradientTexture.SetData(new[] { new Color(40, 80, 40) });
             font = content.Load<SpriteFont>("SpriteFont1");
             base.LoadContent();
         }
@@ -56,7 +58,8 @@ namespace KinectControl.Screens
                                                           (int)textSize.Y + vPad * 2);
 
             spriteBatch.Begin();
-            spriteBatch.Draw(gradientTexture, backgroundRectangle, Color.Transparent);
+            if (!string.IsNullOrEmpty(message))
+                spriteBatch.Draw(gradientTexture, backgroundRectangle, Color.White);
             spriteBatch.DrawString(font, message, textPosition, Color.Orange);
             spriteBatch.End();
             base.Draw(gameTime);
