@@ -37,5 +37,6 @@ namespace KinectControl.Common
         ZoomIn,
         Menu,
         JoinedHands,
+        JoinedZoom,
     }
 }

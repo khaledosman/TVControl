@@ -154,7 +154,7 @@ namespace KinectControl.Common
             gestureController = new GestureController();
             nui.ElevationAngle = 15;
             comm = new CommunicationManager("9600");
-            IRelativeGestureSegment[] waveLeftSegments = new IRelativeGestureSegment[6];
+            /*IRelativeGestureSegment[] waveLeftSegments = new IRelativeGestureSegment[6];
             WaveLeftSegment1 waveLeftSegment1 = new WaveLeftSegment1();
             WaveLeftSegment2 waveLeftSegment2 = new WaveLeftSegment2();
             waveLeftSegments[0] = waveLeftSegment1;
@@ -163,17 +163,18 @@ namespace KinectControl.Common
             waveLeftSegments[3] = waveLeftSegment2;
             waveLeftSegments[4] = waveLeftSegment1;
             waveLeftSegments[5] = waveLeftSegment2;
-            this.gestureController.AddGesture(GestureType.WaveLeft, waveLeftSegments);
-            IRelativeGestureSegment[] JoinedHandsSegments = new IRelativeGestureSegment[10];
+            this.gestureController.AddGesture(GestureType.WaveLeft, waveLeftSegments);*/
+
+            /*IRelativeGestureSegment[] JoinedHandsSegments = new IRelativeGestureSegment[10];
             JoinedHandsSegment1 JoinedHandsSegment = new JoinedHandsSegment1();
             for (int i = 0; i < 10; i++)
             {
                 // gesture consists of the same thing 10 times 
                 JoinedHandsSegments[i] = JoinedHandsSegment;
             }
-            this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);
+            this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);*/
 
-            IRelativeGestureSegment[] swipeUpSegments = new IRelativeGestureSegment[3];
+            /*IRelativeGestureSegment[] swipeUpSegments = new IRelativeGestureSegment[3];
             swipeUpSegments[0] = new SwipeUpSegment1();
             swipeUpSegments[1] = new SwipeUpSegment2();
             swipeUpSegments[2] = new SwipeUpSegment3();
@@ -195,7 +196,7 @@ namespace KinectControl.Common
             swipeRightSegments[0] = new SwipeRightSegment1();
             swipeRightSegments[1] = new SwipeRightSegment2();
             swipeRightSegments[2] = new SwipeRightSegment3();
-            gestureController.AddGesture(GestureType.SwipeRight, swipeRightSegments);
+            gestureController.AddGesture(GestureType.SwipeRight, swipeRightSegments);*/
 
             IRelativeGestureSegment[] menuSegments = new IRelativeGestureSegment[20];
             MenuSegment1 menuSegment = new MenuSegment1();
@@ -206,11 +207,23 @@ namespace KinectControl.Common
             }
             gestureController.AddGesture(GestureType.Menu, menuSegments);
 
-            IRelativeGestureSegment[] zoomInSegments = new IRelativeGestureSegment[3];
+            /*IRelativeGestureSegment[] zoomInSegments = new IRelativeGestureSegment[3];
             zoomInSegments[0] = new ZoomSegment1();
             zoomInSegments[1] = new ZoomSegment2();
             zoomInSegments[2] = new ZoomSegment3();
-            gestureController.AddGesture(GestureType.ZoomIn, zoomInSegments);
+            gestureController.AddGesture(GestureType.ZoomIn, zoomInSegments);*/
+
+            IRelativeGestureSegment[] joinedZoom = new IRelativeGestureSegment[15];
+            JoinedHandsSegment1 joinedHandsSegment = new JoinedHandsSegment1();
+            for (int i = 0; i < 10; i++)
+            {
+                joinedZoom[i] = joinedHandsSegment;
+            }
+            joinedZoom[10] = new ZoomSegment1();
+            joinedZoom[11] = new ZoomSegment2();
+            joinedZoom[12] = new ZoomSegment3();
+            gestureController.AddGesture(GestureType.JoinedZoom, joinedZoom);
+
 
             IRelativeGestureSegment[] zoomOutSegments = new IRelativeGestureSegment[3];
             zoomOutSegments[0] = new ZoomSegment3();
