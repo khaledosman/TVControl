@@ -31,7 +31,7 @@ namespace KinectControl.Common
         }
         #endregion
 
-  /*      #region KinectInteraction
+        /*      #region KinectInteraction
        private MyInteractionClient myInteractionClient;
         private DepthImagePixel[] depthBuffer;
         /// <summary>
@@ -106,6 +106,9 @@ namespace KinectControl.Common
 
         #endregion
 
+        public short[] RawDepthData { get; private set; }
+        public Microsoft.Xna.Framework.Color[] DepthData { get; private set; }
+
         #region Initialize metohds
         /// <summary>
         /// Handle insertion of Kinect sensor.
@@ -138,8 +141,11 @@ namespace KinectControl.Common
                     MaxDeviationRadius = 0.04f
                 };
                 this.nui.SkeletonStream.Enable(parameters);
-                this.nui.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+                this.nui.DepthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
                 this.nui.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+
+                RawDepthData = new short[nui.DepthStream.FramePixelDataLength];
+                DepthData = new Microsoft.Xna.Framework.Color[nui.DepthStream.FramePixelDataLength];
             }
             catch (Exception)
             { return; }
@@ -213,7 +219,7 @@ namespace KinectControl.Common
             zoomInSegments[2] = new ZoomSegment3();
             gestureController.AddGesture(GestureType.ZoomIn, zoomInSegments);*/
 
-            IRelativeGestureSegment[] joinedZoom = new IRelativeGestureSegment[15];
+            IRelativeGestureSegment[] joinedZoom = new IRelativeGestureSegment[13];
             JoinedHandsSegment1 joinedHandsSegment = new JoinedHandsSegment1();
             for (int i = 0; i < 10; i++)
             {
@@ -343,24 +349,52 @@ namespace KinectControl.Common
                 return;
             }
 
-            using (DepthImageFrame depthFrame = depthImageFrameReadyEventArgs.OpenDepthImageFrame())
+            int pd = 0;
+            if (trackedSkeleton != null)
             {
-                if (null != depthFrame)
-                {
-                   // depthBuffer = new DepthImagePixel[depthFrame.PixelDataLength];
-                    //depthFrame.CopyDepthImagePixelDataTo(depthBuffer);
-                    try
-                    {
-                        // Hand data to Interaction framework to be processed
-                      //  this.interactionStream.ProcessDepth(depthBuffer, depthFrame.Timestamp);
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // DepthFrame functions may throw when the sensor gets
-                        // into a bad state.  Ignore the frame in that case.
-                    }
-                }
+                var sp = trackedSkeleton.Joints.OrderBy(j => j.Position.Z).Last().Position;
+                var dp = nui.CoordinateMapper.MapSkeletonPointToDepthPoint(sp, DepthImageFormat.Resolution320x240Fps30);
+                pd = dp.Depth;
+            }
 
+            using (DepthImageFrame frame = depthImageFrameReadyEventArgs.OpenDepthImageFrame())
+            {
+                if (frame != null)
+                {
+                    frame.CopyPixelDataTo(RawDepthData);
+
+                    // does some processing on the depth data using a Parallel For Loop
+                    // the result in a Color array where the Red is the normalized depth value (ie: depth / max depth)
+                    // and in case of "unknown depth" it assumes it has a dpeth of 1
+                    // the green component is a player mask (1 of there is no player index, 0 otherwise)
+                    System.Threading.Tasks.Parallel.For(0, RawDepthData.Length, i =>
+                    {
+                        var gray = RawDepthData[i] == -8 || RawDepthData[i] == 32760 ?
+                            (byte)255 : (byte)(RawDepthData[i] / 125);
+                        var pid = RawDepthData[i] % 8;
+
+                        DepthData[i].A = 255;
+                        DepthData[i].G = gray;
+                        if (pid != 0 && RawDepthData[i] / 8 < pd)
+                        {
+                            DepthData[i].R = 0;
+                            DepthData[i].B = 0;
+                        }
+                        else
+                        {
+                            DepthData[i].R = gray;
+                            DepthData[i].B = gray;
+                        }
+                    });
+
+                    //lock (this)
+                    //{
+                    //    // Make sure the depth texture is not assigned to the GPU
+                    //    Game.GraphicsDevice.Textures[2] = null;
+                    //    // Update the Depth Texture with the new Depth Data
+                    //    DepthTex.SetData(depthData);
+                    //}
+                }
             }
         }
 
