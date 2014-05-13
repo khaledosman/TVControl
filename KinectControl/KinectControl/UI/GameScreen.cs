@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using KinectControl.Common;
 using System;
+using KinectControl.Screens;
 
 namespace KinectControl.UI
 {
@@ -141,7 +142,6 @@ namespace KinectControl.UI
                 if (!IsFrozen)
                     if (enablePause)
                     {
-<<<<<<< HEAD
                         //Freeze Screen, Show pause Screen\
                         screenPaused = true;
                         this.FreezeScreen();
@@ -150,8 +150,7 @@ namespace KinectControl.UI
                     {
                         //exit pause screen, unfreeze screen
                         this.UnfreezeScreen();
-=======
-                        if (userAvatar.Avatar == userAvatar.AllAvatars[0])
+                       if (userAvatar.Avatar == userAvatar.AllAvatars[0])
                         {
                             //Freeze Screen, Show pause Screen\
                             screenPaused = true;
@@ -163,7 +162,6 @@ namespace KinectControl.UI
                             //exit pause screen, unfreeze screen
                             this.UnfreezeScreen();
                         }
->>>>>>> d41113bb3cef440a169b1a0bf9cfec35c1fd0f45
                     }
 
                 var currSkel = screenManager.Kinect.trackedSkeleton;
