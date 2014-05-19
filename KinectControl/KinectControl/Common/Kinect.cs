@@ -173,15 +173,6 @@ namespace KinectControl.Common
             waveLeftSegments[5] = waveLeftSegment2;
             this.gestureController.AddGesture(GestureType.WaveLeft, waveLeftSegments);*/
 
-         /*   IRelativeGestureSegment[] JoinedHandsSegments = new IRelativeGestureSegment[10];
-            JoinedHandsSegment1 JoinedHandsSegment = new JoinedHandsSegment1();
-            for (int i = 0; i < 10; i++)
-            {
-                // gesture consists of the same thing 10 times 
-                JoinedHandsSegments[i] = JoinedHandsSegment;
-            }
-            this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);
-          */
 
             /*IRelativeGestureSegment[] swipeUpSegments = new IRelativeGestureSegment[3];
             swipeUpSegments[0] = new SwipeUpSegment1();
@@ -222,12 +213,25 @@ namespace KinectControl.Common
             zoomInSegments[2] = new ZoomSegment3();
             gestureController.AddGesture(GestureType.ZoomIn, zoomInSegments);*/
 
+            IRelativeGestureSegment[] joinedHandsSegments = new IRelativeGestureSegment[10];
+           /* JoinedHandsSegment1 JoinedHandsSegment = new JoinedHandsSegment1();
+            for (int i = 0; i < 10; i++)
+            {
+                // gesture consists of the same thing 10 times 
+                JoinedHandsSegments[i] = JoinedHandsSegment;
+            }
+            this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);*/
+          
+
             IRelativeGestureSegment[] joinedZoom = new IRelativeGestureSegment[13];
             JoinedHandsSegment1 joinedHandsSegment = new JoinedHandsSegment1();
             for (int i = 0; i < 10; i++)
             {
                 joinedZoom[i] = joinedHandsSegment;
+                //joinedHandsSegments[i] = joinedHandsSegment;
             }
+            //this.gestureController.AddGesture(GestureType.JoinedHands, joinedHandsSegments);
+
             joinedZoom[10] = new ZoomSegment1();
             joinedZoom[11] = new ZoomSegment2();
             joinedZoom[12] = new ZoomSegment3();
@@ -589,10 +593,9 @@ namespace KinectControl.Common
                 case GestureType.SwipeRight:
                     Gesture = "SwipeRight";
                     break;
-             /*   case GestureType.JoinedHands:
+               /* case GestureType.JoinedHands:
                     Gesture = "JoinedHands";
-                    break;
-             */
+                    break;*/
                 case GestureType.Menu:
                     Gesture = "Menu";
                     break;

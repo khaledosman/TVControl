@@ -60,6 +60,7 @@ namespace KinectControl.Screens
             spriteBatch.Begin();
             if (!string.IsNullOrEmpty(message))
                 spriteBatch.Draw(gradientTexture, backgroundRectangle, Color.White);
+            if(message!=null)
             spriteBatch.DrawString(font, message, textPosition, Color.Orange);
             spriteBatch.End();
             base.Draw(gameTime);

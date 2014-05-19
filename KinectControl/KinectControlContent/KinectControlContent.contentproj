@@ -118,8 +118,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="video.wmv">
-      <Name>video</Name>
+    <Compile Include="Videos\1.wmv">
+      <Name>1</Name>
       <Importer>WmvImporter</Importer>
       <Processor>VideoProcessor</Processor>
     </Compile>
@@ -153,6 +153,25 @@
       <Name>Right Arc</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Videos\2.wmv">
+      <Name>2</Name>
+      <Importer>WmvImporter</Importer>
+      <Processor>VideoProcessor</Processor>
+    </Compile>
+    <Compile Include="Videos\3.wmv">
+      <Name>3</Name>
+      <Importer>WmvImporter</Importer>
+      <Processor>VideoProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Videos\4.wmv">
+      <Name>4</Name>
+      <Importer>WmvImporter</Importer>
+      <Processor>VideoProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

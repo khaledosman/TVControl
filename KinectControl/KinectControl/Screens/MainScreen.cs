@@ -14,6 +14,7 @@ namespace KinectControl.Screens
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private SpriteFont font2;
+        private Video currentVid;
         private bool shouldPlay;
         private Kinect kinect;
         private string gesture;
@@ -57,7 +58,7 @@ namespace KinectControl.Screens
         {
             //showAvatar = false;
             enablePause = false;
-            videos = new Video[1];
+            videos = new Video[4];
             /*        button = new Button();
                     hand = new HandCursor();
                     hand.Initialize(ScreenManager.Kinect);
@@ -92,7 +93,12 @@ namespace KinectControl.Screens
             gradientTexture = content.Load<Texture2D>("Textures/gradientTexture");
             font = content.Load<SpriteFont>("SpriteFont1");
             font2 = content.Load<SpriteFont>("Fontopo");
-            videos[0] = content.Load<Video>("video");
+            videos[0] = content.Load<Video>("Videos/1");
+            videos[1] = content.Load<Video>("Videos/2");
+            videos[2] = content.Load<Video>("Videos/3");
+            videos[3] = content.Load<Video>("Videos/4");
+            currentVid = videos[0];
+        //    videos[4] = content.Load<Video>("Videos/5");
             //video = content.Load<Video>("Videos\\Wildlife");
             player = new VideoPlayer();
             //font2.LineSpacing = 21;
@@ -117,6 +123,16 @@ namespace KinectControl.Screens
                 kinect.Gesture = "";
                 tvPopup.message = "";
             }
+            if (voiceCommands.HeardString.Equals("Open"))
+            {
+                shouldPlay = true;
+                player.Volume = (float) tv.Volume/100;
+            }
+            if (voiceCommands.HeardString.Equals("Close"))
+            {
+                shouldPlay = false;
+                player.Volume = 0;
+            }
             if (gesture.Equals("Joined Zoom"))
             {
                 if (shouldPlay)
@@ -127,7 +143,7 @@ namespace KinectControl.Screens
                 else
                 {
                     shouldPlay = true;
-                    player.Volume = 1;
+                    player.Volume = (float) tv.Volume/100;
                 }
                 kinect.Gesture = "";
             }
@@ -135,7 +151,7 @@ namespace KinectControl.Screens
             if (player.State == MediaState.Stopped && shouldPlay)
             {
                 player.IsLooped = true;
-                player.Play(videos[0]);
+                player.Play(currentVid);
             }
 
             skel = kinect.trackedSkeleton;
@@ -158,6 +174,16 @@ namespace KinectControl.Screens
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
 
                 tv.UpdateValues(leftAngle, rightAngle, leftDist > 0, rightDist > 0);
+                player.Volume = (float)tv.Volume / 100;
+                switch (tv.Channel)
+                {
+                    case 1: player.Pause(); currentVid = videos[0]; player.Play(currentVid); break;
+                    case 2: player.Pause(); currentVid = videos[1]; player.Play(currentVid); break;
+                    case 3: player.Pause(); currentVid = videos[2]; player.Play(currentVid); break;
+                    case 4: player.Pause(); currentVid = videos[3]; player.Play(currentVid); break;
+                    //case 5: currentVid = videos[4]; break;
+                    default: break;
+                }
                 tvPopup.message = tv.Status;
                 // tvPopup.Update(gameTime);
             }

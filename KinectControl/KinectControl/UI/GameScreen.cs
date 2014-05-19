@@ -52,7 +52,7 @@ namespace KinectControl.UI
             get { return userAvatar; }
             set { userAvatar = value; }
         }
-        private VoiceCommands voiceCommands;
+        public VoiceCommands voiceCommands;
 
         public bool IsFrozen
         {

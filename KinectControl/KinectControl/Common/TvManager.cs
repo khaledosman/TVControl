@@ -61,7 +61,7 @@ namespace KinectControl.Common
                     else rightAngle += deadzone;
 
                     channel += MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2) / 6f;
-                    channel = MathHelper.Clamp(channel, 0, 100);
+                    channel = MathHelper.Clamp(channel, 1, 4);
                 }
 
                 Status = "Channel: " + Channel;
