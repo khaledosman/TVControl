@@ -14,7 +14,7 @@ namespace KinectControl.Screens
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private SpriteFont font2;
-        private Video currentVid;
+        private VideoPlayer currentPlayer;
         private bool shouldPlay;
         private Kinect kinect;
         private string gesture;
@@ -31,7 +31,7 @@ namespace KinectControl.Screens
         private Skeleton skel;
         //Video video;
         Video[] videos;
-        VideoPlayer player;
+        VideoPlayer[] players;
         Texture2D videoTexture;
 
         TvManager tv;
@@ -43,6 +43,8 @@ namespace KinectControl.Screens
 
         float leftAngle, leftDist;
         float rightAngle, rightDist;
+
+        Texture2D whitePixel;
 
         public string Text
         {
@@ -69,7 +71,7 @@ namespace KinectControl.Screens
                     textBox = new Rectangle((int)textPosition.X, (int)textPosition.Y, 1020, 455);*/
 
             tv = new TvManager();
-            tvPopup = new PopupScreen("",240);
+            tvPopup = new PopupScreen("", 240);
             ScreenManager.AddScreen(tvPopup);
 
             base.Initialize();
@@ -97,10 +99,17 @@ namespace KinectControl.Screens
             videos[1] = content.Load<Video>("Videos/2");
             videos[2] = content.Load<Video>("Videos/3");
             videos[3] = content.Load<Video>("Videos/4");
-            currentVid = videos[0];
-        //    videos[4] = content.Load<Video>("Videos/5");
+            //    videos[4] = content.Load<Video>("Videos/5");
             //video = content.Load<Video>("Videos\\Wildlife");
-            player = new VideoPlayer();
+            players = new VideoPlayer[4];
+            for (int i = 0; i < players.Length; i++)
+            {
+                players[i] = new VideoPlayer();
+                players[i].IsLooped = true;
+                players[i].Play(videos[i]);
+                players[i].Pause();
+            }
+            currentPlayer = players[0];
             //font2.LineSpacing = 21;
             //hand.LoadContent(content);
             //button.LoadContent(content);
@@ -109,6 +118,9 @@ namespace KinectControl.Screens
             leftArcTex = content.Load<Texture2D>("Textures/Left Arc");
             rightArcTex = content.Load<Texture2D>("Textures/Right Arc");
             arrowTex = content.Load<Texture2D>("Textures/Arrow");
+
+            whitePixel = new Texture2D(graphics, 1, 1);
+            whitePixel.SetData(new[] { Color.White });
 
             base.LoadContent();
         }
@@ -126,32 +138,32 @@ namespace KinectControl.Screens
             if (voiceCommands.HeardString.Equals("Open"))
             {
                 shouldPlay = true;
-                player.Volume = (float) tv.Volume/100;
+                foreach (var player in players)
+                    player.IsMuted = true;
             }
             if (voiceCommands.HeardString.Equals("Close"))
             {
                 shouldPlay = false;
-                player.Volume = 0;
+                foreach (var player in players)
+                    player.IsMuted = false;
             }
             if (gesture.Equals("Joined Zoom"))
             {
                 if (shouldPlay)
                 {
                     shouldPlay = false;
-                    player.Volume = 0;
+                    //player.Volume = 0;
+                    foreach (var player in players)
+                        player.IsMuted = true;
                 }
                 else
                 {
                     shouldPlay = true;
-                    player.Volume = (float) tv.Volume/100;
+                    //player.Volume = tv.Volume / 100f;
+                    foreach (var player in players)
+                        player.IsMuted = false;
                 }
                 kinect.Gesture = "";
-            }
-
-            if (player.State == MediaState.Stopped && shouldPlay)
-            {
-                player.IsLooped = true;
-                player.Play(currentVid);
             }
 
             skel = kinect.trackedSkeleton;
@@ -163,29 +175,30 @@ namespace KinectControl.Screens
                 if (skel.GetDistanceY(JointType.WristLeft, JointType.HipLeft) < 0)
                     leftAngle -= MathHelper.Pi;
                 leftAngle = MathHelper.Clamp(leftAngle, -MathHelper.PiOver2, MathHelper.PiOver2);
-                
+
                 leftDist = skel.GetDistance(JointType.WristLeft, JointType.HipLeft, 'z') - 0.2f;
 
                 rightAngle = skel.GetRotationZ2(JointType.WristRight, JointType.HipRight) - 0.32f;
                 if (skel.GetDistanceY(JointType.WristRight, JointType.HipRight) < 0)
                     rightAngle += MathHelper.Pi;
                 rightAngle = MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2);
-                
+
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
 
+                var lastCh = tv.Channel;
                 tv.UpdateValues(leftAngle, rightAngle, leftDist > 0, rightDist > 0);
-                player.Volume = (float)tv.Volume / 100;
-                switch (tv.Channel)
+
+                foreach (var player in players)
+                    player.Volume = (float)tv.Volume / 100;
+
+                if (tv.Channel != lastCh)
                 {
-                    case 1: player.Pause(); currentVid = videos[0]; player.Play(currentVid); break;
-                    case 2: player.Pause(); currentVid = videos[1]; player.Play(currentVid); break;
-                    case 3: player.Pause(); currentVid = videos[2]; player.Play(currentVid); break;
-                    case 4: player.Pause(); currentVid = videos[3]; player.Play(currentVid); break;
-                    //case 5: currentVid = videos[4]; break;
-                    default: break;
+                    currentPlayer.Pause();
+                    currentPlayer = players[tv.Channel - 1];
+                    currentPlayer.Resume();
                 }
+
                 tvPopup.message = tv.Status;
-                // tvPopup.Update(gameTime);
             }
 
             base.Update(gameTime);
@@ -233,8 +246,8 @@ namespace KinectControl.Screens
             // spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
             if (shouldPlay)
             {
-                if (player.State != MediaState.Stopped)
-                    videoTexture = player.GetTexture();
+                if (currentPlayer.State != MediaState.Stopped)
+                    videoTexture = currentPlayer.GetTexture();
             }
 
             // Drawing to the rectangle will stretch the 
@@ -245,10 +258,15 @@ namespace KinectControl.Screens
                 graphics.Viewport.Height);
 
             // Draw the video, if we have a texture to draw.
-            if (videoTexture != null)
+            if (videoTexture != null && shouldPlay)
             {
-                if(shouldPlay)
                 spriteBatch.Draw(videoTexture, screen, Color.White);
+
+                var br = tv.Brightness / 50f - 1f;
+                if (br > 0)
+                    spriteBatch.Draw(whitePixel, screen, new Color(br, br, br, br));
+                else
+                    spriteBatch.Draw(whitePixel, screen, new Color(0f, 0f, 0f, -br));
             }
 
             //spriteBatch.DrawString(font2, textToDraw, textPosition, Color.White);

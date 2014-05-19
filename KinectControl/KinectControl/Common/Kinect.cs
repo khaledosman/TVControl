@@ -160,7 +160,7 @@ namespace KinectControl.Common
         {
             gestureController = new GestureController();
             blankScreen = new BlankScreen();
-            nui.ElevationAngle = 15;
+            nui.ElevationAngle = 10;
             comm = new CommunicationManager("9600");
             /*IRelativeGestureSegment[] waveLeftSegments = new IRelativeGestureSegment[6];
             WaveLeftSegment1 waveLeftSegment1 = new WaveLeftSegment1();

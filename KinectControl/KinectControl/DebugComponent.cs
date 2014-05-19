@@ -114,9 +114,9 @@ namespace KinectControl
                 avgFrameTime = gameTime.ElapsedGameTime.TotalMilliseconds;
             else
                 avgFrameTime = avgFrameTime * 0.99f + gameTime.ElapsedGameTime.TotalMilliseconds * 0.01f;
-           // spriteBatch.DrawString(font,
-             //   gameTime.ElapsedGameTime.TotalMilliseconds.ToString("0.00") + " / " + avgFrameTime.ToString("0.00"),
-               // new Vector2(10, Constants.screenHeight - 60), Color.OrangeRed);
+            //spriteBatch.DrawString(font,
+            //    gameTime.ElapsedGameTime.TotalMilliseconds.ToString("0.00") + " / " + avgFrameTime.ToString("0.00"),
+            //    new Vector2(10, Constants.screenHeight - 60), Color.OrangeRed);
 
             spriteBatch.End();
 

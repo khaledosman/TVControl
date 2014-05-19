@@ -19,7 +19,7 @@ namespace KinectControl.Common
         public TvManager()
         {
             volume = 20;
-            channel = 0;
+            channel = 1;
             brightness = 50;
         }
 
@@ -60,7 +60,7 @@ namespace KinectControl.Common
                     if (rightAngle > 0) rightAngle -= deadzone;
                     else rightAngle += deadzone;
 
-                    channel += MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2) / 6f;
+                    channel += MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2) / 8f;
                     channel = MathHelper.Clamp(channel, 1, 4);
                 }
 
