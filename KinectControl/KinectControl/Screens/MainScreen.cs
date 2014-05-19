@@ -46,6 +46,8 @@ namespace KinectControl.Screens
 
         Texture2D whitePixel;
 
+        float suppressUiTimer;
+
         public string Text
         {
             get { return text; }
@@ -73,6 +75,8 @@ namespace KinectControl.Screens
             tv = new TvManager();
             tvPopup = new PopupScreen("", 240);
             ScreenManager.AddScreen(tvPopup);
+
+            suppressUiTimer = 0;
 
             base.Initialize();
         }
@@ -166,6 +170,13 @@ namespace KinectControl.Screens
                 kinect.Gesture = "";
             }
 
+            var joiningHands = false;
+            if (joiningHands)
+                suppressUiTimer = 2;
+
+            if (suppressUiTimer > 0)
+                suppressUiTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             skel = kinect.trackedSkeleton;
             if ((skel != null))
             //&& skel.Joints[JointType.WristLeft].Position.Y > skel.Joints[JointType.ElbowLeft].Position.Y) &&
@@ -184,6 +195,12 @@ namespace KinectControl.Screens
                 rightAngle = MathHelper.Clamp(rightAngle, -MathHelper.PiOver2, MathHelper.PiOver2);
 
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
+
+                if (suppressUiTimer > 0)
+                {
+                    leftDist = 0;
+                    rightDist = 0;
+                }
 
                 var lastCh = tv.Channel;
                 tv.UpdateValues(leftAngle, rightAngle, leftDist > 0, rightDist > 0);
