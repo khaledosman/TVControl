@@ -139,13 +139,13 @@ namespace KinectControl.Screens
             {
                 shouldPlay = true;
                 foreach (var player in players)
-                    player.IsMuted = true;
+                    player.IsMuted = false;
             }
             if (voiceCommands.HeardString.Equals("Close"))
             {
                 shouldPlay = false;
                 foreach (var player in players)
-                    player.IsMuted = false;
+                    player.IsMuted = true;
             }
             if (gesture.Equals("Joined Zoom"))
             {
