@@ -16,7 +16,7 @@ namespace KinectControl.Common
         private BlankScreen blankScreen;
         #region Gestures variables
         private string _gesture;
-        private GestureController gestureController;
+        public GestureController gestureController;
         public String Gesture
         {
             get { return _gesture; }
@@ -214,14 +214,14 @@ namespace KinectControl.Common
             gestureController.AddGesture(GestureType.ZoomIn, zoomInSegments);*/
 
             IRelativeGestureSegment[] joinedHandsSegments = new IRelativeGestureSegment[10];
-           /* JoinedHandsSegment1 JoinedHandsSegment = new JoinedHandsSegment1();
-            for (int i = 0; i < 10; i++)
-            {
-                // gesture consists of the same thing 10 times 
-                JoinedHandsSegments[i] = JoinedHandsSegment;
-            }
-            this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);*/
-          
+            /* JoinedHandsSegment1 JoinedHandsSegment = new JoinedHandsSegment1();
+             for (int i = 0; i < 10; i++)
+             {
+                 // gesture consists of the same thing 10 times 
+                 JoinedHandsSegments[i] = JoinedHandsSegment;
+             }
+             this.gestureController.AddGesture(GestureType.JoinedHands, JoinedHandsSegments);*/
+
 
             IRelativeGestureSegment[] joinedZoom = new IRelativeGestureSegment[13];
             JoinedHandsSegment1 joinedHandsSegment = new JoinedHandsSegment1();
@@ -238,12 +238,12 @@ namespace KinectControl.Common
             gestureController.AddGesture(GestureType.JoinedZoom, joinedZoom);
 
 
-            /*IRelativeGestureSegment[] zoomOutSegments = new IRelativeGestureSegment[3];
+            IRelativeGestureSegment[] zoomOutSegments = new IRelativeGestureSegment[3];
             zoomOutSegments[0] = new ZoomSegment3();
             zoomOutSegments[1] = new ZoomSegment2();
             zoomOutSegments[2] = new ZoomSegment1();
             gestureController.AddGesture(GestureType.ZoomOut, zoomOutSegments);
-             */
+
 
 
             gestureController.GestureRecognized += OnGestureRecognized;
@@ -280,9 +280,12 @@ namespace KinectControl.Common
             commands = new string[2];
             commands[0] = "Open";
             commands[1] = "Close";
-            _voiceCommands = new VoiceCommands(nui, commands);
-            var voiceThread = new Thread(_voiceCommands.StartAudioStream);
-            voiceThread.Start();
+            if (nui != null)
+            {
+                _voiceCommands = new VoiceCommands(nui, commands);
+                var voiceThread = new Thread(_voiceCommands.StartAudioStream);
+                voiceThread.Start();
+            }
         }
         #endregion
 
@@ -382,16 +385,22 @@ namespace KinectControl.Common
                         var pid = RawDepthData[i] % 8;
 
                         DepthData[i].A = 255;
-                        DepthData[i].G = gray;
-                        if (pid != 0 && RawDepthData[i] / 8 < pd)
+                        //DepthData[i].G = gray;
+                        if (pd == 0)
+                        {
+                            DepthData[i].R = DepthData[i].G = DepthData[i].B = gray;
+                        }
+                        else if (pid != 0 && RawDepthData[i] / 8 < pd)
                         {
                             DepthData[i].R = 0;
+                            DepthData[i].G = 255;
                             DepthData[i].B = 0;
                         }
                         else
                         {
-                            DepthData[i].R = gray;
-                            DepthData[i].B = gray;
+                            //DepthData[i].R = gray;
+                            //DepthData[i].B = gray;
+                            DepthData[i].A = 0;
                         }
                     });
 
@@ -593,21 +602,23 @@ namespace KinectControl.Common
                 case GestureType.SwipeRight:
                     Gesture = "SwipeRight";
                     break;
-               /* case GestureType.JoinedHands:
-                    Gesture = "JoinedHands";
-                    break;*/
-                case GestureType.Menu:
+                /* case GestureType.JoinedHands:
+                     Gesture = "JoinedHands";
+                     break;*/
+                /*case GestureType.Menu:
                     Gesture = "Menu";
                     break;
-                /*case GestureType.ZoomIn:
+                 * /
+                case GestureType.ZoomIn:
                     Gesture = "Zoom In";
                     break;
+                 */
                 case GestureType.ZoomOut:
                     Gesture = "Zoom out";
-                    break;*/
+                    break;
                 case GestureType.JoinedZoom:
                     Gesture = "Joined Zoom";
-                    break;             
+                    break;
             }
         }
         #endregion

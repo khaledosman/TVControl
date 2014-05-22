@@ -3,7 +3,7 @@ using Microsoft.Kinect;
 
 namespace KinectControl.Common
 {
-    class Gesture
+    public class Gesture
     {
         /// <summary>
         /// The parts that make up this gesture
@@ -13,7 +13,7 @@ namespace KinectControl.Common
         /// <summary>
         /// The current gesture part that we are matching against
         /// </summary>
-        private int currentGesturePart = 0;
+        public int currentGesturePart = 0;
 
         /// <summary>
         /// the number of frames to pause for when a pause is initiated
@@ -33,7 +33,7 @@ namespace KinectControl.Common
         /// <summary>
         /// The type of gesture that this is
         /// </summary>
-        private GestureType type;
+        public GestureType type;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Gesture"/> class.

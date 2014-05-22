@@ -15,6 +15,7 @@ namespace KinectControl.Screens
         private SpriteFont font;
         private SpriteFont font2;
         private VideoPlayer currentPlayer;
+        public bool joiningHands;
         private bool shouldPlay;
         private Kinect kinect;
         private string gesture;
@@ -47,6 +48,8 @@ namespace KinectControl.Screens
         Texture2D whitePixel;
 
         float suppressUiTimer;
+
+        Gesture joinZoom;
 
         public string Text
         {
@@ -112,8 +115,10 @@ namespace KinectControl.Screens
                 players[i].IsLooped = true;
                 players[i].Play(videos[i]);
                 players[i].Pause();
+                players[i].IsMuted = true;
             }
             currentPlayer = players[0];
+            currentPlayer.Resume();
             //font2.LineSpacing = 21;
             //hand.LoadContent(content);
             //button.LoadContent(content);
@@ -125,6 +130,8 @@ namespace KinectControl.Screens
 
             whitePixel = new Texture2D(graphics, 1, 1);
             whitePixel.SetData(new[] { Color.White });
+
+            joinZoom = kinect.gestureController.gestures.Find(g => g.type == GestureType.JoinedZoom);
 
             base.LoadContent();
         }
@@ -139,18 +146,25 @@ namespace KinectControl.Screens
                 kinect.Gesture = "";
                 tvPopup.message = "";
             }
-            if (voiceCommands.HeardString.Equals("Open"))
+            if (FrameNumber % 120 == 0)
+                joiningHands = false;
+            if (voiceCommands != null)
             {
-                shouldPlay = true;
-                foreach (var player in players)
-                    player.IsMuted = false;
+                if (voiceCommands.HeardString.Equals("Open"))
+                {
+                    shouldPlay = true;
+                    foreach (var player in players)
+                        player.IsMuted = false;
+                }
+                if (voiceCommands.HeardString.Equals("Close"))
+                {
+                    shouldPlay = false;
+                    foreach (var player in players)
+                        player.IsMuted = true;
+                }
             }
-            if (voiceCommands.HeardString.Equals("Close"))
-            {
-                shouldPlay = false;
-                foreach (var player in players)
-                    player.IsMuted = true;
-            }
+            //if (gesture.Equals("Zoom out"))
+            //    joiningHands = true;
             if (gesture.Equals("Joined Zoom"))
             {
                 if (shouldPlay)
@@ -170,7 +184,9 @@ namespace KinectControl.Screens
                 kinect.Gesture = "";
             }
 
-            var joiningHands = false;
+            if (joinZoom.currentGesturePart >= 1 && joinZoom.currentGesturePart <= 10)
+                joiningHands = true;
+
             if (joiningHands)
                 suppressUiTimer = 2;
 
@@ -196,7 +212,7 @@ namespace KinectControl.Screens
 
                 rightDist = skel.GetDistance(JointType.WristRight, JointType.HipRight, 'z') - 0.2f;
 
-                if (suppressUiTimer > 0)
+                if (suppressUiTimer > 0 || !shouldPlay)
                 {
                     leftDist = 0;
                     rightDist = 0;
@@ -258,8 +274,8 @@ namespace KinectControl.Screens
         {
             spriteBatch.Begin();
             //spriteBatch.Draw(gradientTexture, new Rectangle(0, 0, 1280, 720), Color.White);
-            if (!(gesture.Equals("")))
-                tvPopup.message = gesture;
+      //      if (!(gesture.Equals("")))
+        //        tvPopup.message = gesture;
             // spriteBatch.DrawString(font, "gesture recognized: " + gesture, new Vector2(500, 500), Color.Orange);
             if (shouldPlay)
             {
