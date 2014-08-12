@@ -174,9 +174,10 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KinectControlContent\KinectControlContent.contentproj">
-      <Name>KinectControlContent</Name>
+    <ProjectReference Include="..\KinectControlContent\TVControlContent.contentproj">
+      <Name>TVControlContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>
+      <Project>{1734365E-D571-4985-9608-CFC0974723FA}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
