@@ -130,7 +130,7 @@ namespace KinectControl.Screens
 
             whitePixel = new Texture2D(graphics, 1, 1);
             whitePixel.SetData(new[] { Color.White });
-            if(kinect.gestureController != null)
+
             joinZoom = kinect.gestureController.gestures.Find(g => g.type == GestureType.JoinedZoom);
 
             base.LoadContent();
@@ -183,7 +183,7 @@ namespace KinectControl.Screens
                 }
                 kinect.Gesture = "";
             }
-            if(joinZoom != null)
+
             if (joinZoom.currentGesturePart >= 1 && joinZoom.currentGesturePart <= 10)
                 joiningHands = true;
 
