@@ -16,7 +16,7 @@ namespace KinectControl.Common
         private BlankScreen blankScreen;
         #region Gestures variables
         private string _gesture;
-        private GestureController gestureController;
+        public GestureController gestureController;
         public String Gesture
         {
             get { return _gesture; }

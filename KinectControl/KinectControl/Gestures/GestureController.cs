@@ -9,7 +9,7 @@ namespace KinectControl.Common
         /// <summary>
         /// The list of all gestures we are currently looking for
         /// </summary>
-        private List<Gesture> gestures = new List<Gesture>();
+        public List<Gesture> gestures = new List<Gesture>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GestureController"/> class.
