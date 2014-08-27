@@ -48,10 +48,10 @@ namespace KinectControl.Common
             try
             {
                 kinectAudio = kinect.AudioSource;
-                //kinectAudio.BeamAngleMode = BeamAngleMode.Manual;
-                //kinectAudio.ManualBeamAngle = Math.PI / 180.0 * 10.0; //angle in radians
-                kinectAudio.BeamAngleMode = BeamAngleMode.Adaptive;
-                kinect.AudioSource.EchoCancellationMode = EchoCancellationMode.CancellationAndSuppression;
+                kinectAudio.BeamAngleMode = BeamAngleMode.Manual;
+                kinectAudio.ManualBeamAngle = Math.PI / 180.0 * 10.0; //angle in radians
+                //kinectAudio.BeamAngleMode = BeamAngleMode.Adaptive;
+                kinect.AudioSource.EchoCancellationMode = EchoCancellationMode.None;
                 kinect.AudioSource.AutomaticGainControlEnabled = false;
                 var stream = kinectAudio.Start();
                 speechRecognitionEngine.SetInputToAudioStream(stream,
