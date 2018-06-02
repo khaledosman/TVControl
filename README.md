@@ -1,4 +1,4 @@
 KinectControl
 =============
 
-Controlling Home Devices with Kinect
+Controlling Home Devices with Microsoft Kinect sensor through voice and gesture recognition
